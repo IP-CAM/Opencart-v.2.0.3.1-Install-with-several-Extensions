@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>OpenStock 2</id>
+    <version>15</version>
+    <vqmver>2.5.0</vqmver>
+    <author>Welford Media</author>
+    <file name="admin/controller/catalog/option.php">
+        <operation>
+            <search position="after" offset="1"><![CDATA[$this->error['warning'] = $this->language->get('error_type');]]></search>
+            <add><![CDATA[
+                $this->load->model('module/openstock');
+                $this->language->load('module/openstock');
+                $offending_values = $this->model_module_openstock->checkProductOptionValues($this->request->post);
+                if ($offending_values) {
+                    $this->error['warning'] = $this->language->get('text_checking_option_values');
+                    foreach ($offending_values as $offending) {
+                        $this->error['warning'] .= $offending['option_name'] . ' > ';
+                        foreach ($offending['products'] as $product) {
+                            $this->error['warning'] .= $product['name'] . ', ';
+                        }
+
+                        $this->error['warning'] = rtrim($this->error['warning'], ', ');
+
+                        $this->error['warning'] .= '<br />';
+                    }
+                }
+            ]]></add>
+        </operation>
+    </file>
+    <file name="admin/view/template/catalog/product_list.tpl">
+        <operation>
+            <search position="replace" offset="6"><![CDATA[<td class="text-right"><?php if ($product['quantity'] <= 0) { ?>]]></search>
+            <add><![CDATA[
+              <td class="text-right">
+                <?php if ($product['has_option'] != 1) { ?>
+                  <?php if ($product['quantity'] <= 0) { ?>
+                    <span class="label label-warning"><?php echo $product['quantity']; ?></span>
+                  <?php } elseif ($product['quantity'] <= 5) { ?>
+                    <span class="label label-danger"><?php echo $product['quantity']; ?></span>
+                  <?php } else { ?>
+                    <span class="label label-success"><?php echo $product['quantity']; ?></span>
+                  <?php } ?>
+                <?php } else { ?>
+                  <span><?php echo $product['var_count']; ?> variations</span><br />
+                  <span><?php echo $product['var_stock_count']; ?> stock</span>
+                <?php } ?>
+              </td>
+            ]]></add>
+        </operation>
+    </file>
+    <file name="admin/language/english/catalog/product.php">
+        <operation>
+            <search position="after"><![CDATA[<?php]]></search>
+            <add><![CDATA[
+                $_['entry_has_option']               = 'Has Options';
+                $_['tab_stock']                      = 'Stock Control';
+                $_['column_label_hasoption']         = 'Has options';
+                $_['text_yes_openstock']             = 'Yes - OpenStock';
+                $_['text_yes_regular']               = 'Yes - Regular';
+                $_['tab_option_stock']               = 'Option Stock';
+                $_['lang_atn_adding']                = 'Adding or removing option groups will re-calculate your option stocks! You can add / remove single options and your new stock codes can be seen after you have saved the product.';
+                $_['entry_stockoption_sku']          = 'SKU';
+                $_['entry_stockoption_mix']          = 'Combination';
+                $_['entry_stockoption_active']       = 'Active';
+                $_['entry_stockoption_subtract']     = 'Subtract';
+                $_['entry_stockoption_stock']        = 'Stock';
+                $_['entry_stockoption_price']        = 'Price';
+                $_['entry_stockoption_groups']       = 'Special';
+                $_['entry_stockoption_discount']     = 'Discount';
+            ]]></add>
+        </operation>
+    </file>
+    <file name="admin/controller/catalog/product.php">
+        <operation>
+            <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                'has_option'      => (isset($result['has_option']) ? $result['has_option'] : 0),
+                'var_count'       => (isset($result['has_option']) ? $this->model_module_openstock->countVariation($result['product_id']) : 0),
+                'var_stock_count' => (isset($result['has_option']) ? $this->model_module_openstock->countVariationStock($result['product_id']) : 0),
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[protected function getList() {]]></search>
+            <add><![CDATA[
+                $this->load->model('module/openstock');
+
+                $data['column_label_hasoption'] = $this->language->get('column_label_hasoption');
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after" index="2"><![CDATA[$data['heading_title'] = $this->language->get('heading_title');]]></search>
+            <add><![CDATA[
+                $this->load->model('module/openstock');
+                $data['entry_has_option'] = $this->language->get('entry_has_option');
+                $data['tab_stock'] = $this->language->get('tab_stock');
+                $data['column_label_hasoption'] = $this->language->get('column_label_hasoption');
+                $data['text_yes_openstock'] = $this->language->get('text_yes_openstock');
+                $data['text_yes_regular'] = $this->language->get('text_yes_regular');
+                $data['tab_option_stock'] = $this->language->get('tab_option_stock');
+                $data['lang_atn_adding'] = $this->language->get('lang_atn_adding');
+
+                $data['entry_stockoption_sku'] = $this->language->get('entry_stockoption_sku');
+                $data['entry_stockoption_mix'] = $this->language->get('entry_stockoption_mix');
+                $data['entry_stockoption_active'] = $this->language->get('entry_stockoption_active');
+                $data['entry_stockoption_subtract'] = $this->language->get('entry_stockoption_subtract');
+                $data['entry_stockoption_stock'] = $this->language->get('entry_stockoption_stock');
+                $data['entry_stockoption_price'] = $this->language->get('entry_stockoption_price');
+                $data['entry_stockoption_groups'] = $this->language->get('entry_stockoption_groups');
+                $data['entry_stockoption_discount'] = $this->language->get('entry_stockoption_discount');
+
+                if (isset($this->error['openstock'])) {
+                    $data['error_openstock'] = $this->error['openstock'];
+                } else {
+                    $data['error_openstock'] = '';
+                }
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[if (isset($this->request->post['product_option'])) {]]></search>
+            <add><![CDATA[
+                $this->document->addStyle('view/stylesheet/openstock.css');
+
+                if (version_compare(VERSION, '2.0.0.0', '==')) {
+                    $data['data_date'] = 'data-format="YYYY-MM-DD"';
+                } elseif (version_compare(VERSION, '2.0.1.0', '>=')) {
+                    $data['data_date'] = 'data-date-format="YYYY-MM-DD"';
+                }
+
+                if (isset($this->request->post['has_option'])) {
+                    $data['has_option'] = $this->request->post['has_option'];
+                } elseif (isset($product_info)) {
+                    $data['has_option'] = $product_info['has_option'];
+                } else {
+                    $data['has_option'] = '';
+                }
+
+                $data['variant_special'] = 0;
+                $data['variant_discount'] = 0;
+
+                if (isset($this->request->post['variant'])) {
+                    $data['product_variants'] = $this->request->post['variant'];
+                } elseif (isset($product_info)) {
+                    $data['product_variants'] = $this->model_module_openstock->getVariants($this->request->get['product_id']);
+                } else {
+                    $data['product_variants'] = array();
+                }
+
+                $data['variants'] = array();
+                foreach ($data['product_variants'] as $variant_key => $variant) {
+                    $data['variants'][$variant_key] = $variant;
+
+                    if (!isset($variant['specials'])) {
+                        $data['variants'][$variant_key]['specials'] = array();
+                    }
+
+                    if (!isset($variant['discounts'])) {
+                        $data['variants'][$variant_key]['discounts'] = array();
+                    }
+
+                    if (is_file(DIR_IMAGE . $variant['image'])) {
+                        $image = $variant['image'];
+                        $thumb = $variant['image'];
+                    } else {
+                        $image = '';
+                        $thumb = 'no_image.png';
+                    }
+
+                    $data['variants'][$variant_key]['image'] = $image;
+                    $data['variants'][$variant_key]['thumb'] = $this->model_tool_image->resize($thumb, 100, 100);
+                }
+
+                $data['openstock_show_special_discount_tab'] = $this->config->get('openstock_show_special_discount_tab');
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[if ($this->error && !isset($this->error['warning'])) {]]></search>
+            <add><![CDATA[
+                if (isset($this->request->get['product_id'])) {
+                    $this->load->model('module/openstock');
+
+                    $variant_skus = $this->model_module_openstock->validateVariants($this->request->post, $this->request->get['product_id']);
+
+                    if ($variant_skus) {
+                        $this->error['openstock'] = $variant_skus;
+                    }
+                }
+            ]]></add>
+        </operation>
+    </file>
+    <file name="admin/model/catalog/product.php">
+        <operation>
+            <search position="replace"><![CDATA[model = '" . $this->db->escape($data['model']) . "',]]></search>
+            <add><![CDATA[has_option = '" . $this->db->escape($data['has_option']) . "', model = '" . $this->db->escape($data['model']) . "',]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[$this->addProduct($data);]]></search>
+            <add><![CDATA[
+                $new_product_id = $this->addProduct($data);
+
+                $this->load->model('module/openstock');
+
+                $old_product_variants = $this->model_module_openstock->getVariants($product_id);
+
+                $new_product_variants = $this->model_module_openstock->getVariants($new_product_id);
+
+                foreach ($old_product_variants as $old_product_variant) {
+                    foreach ($new_product_variants as $new_product_variant) {
+                        if ($old_product_variant['combination'] == $new_product_variant['combination']) {
+                            $sku = ($old_product_variant['sku'] ? $old_product_variant['sku'] . '-copy' . $new_product_id : '');
+
+                            $this->db->query("
+                                UPDATE `" . DB_PREFIX . "product_option_variant`
+                                SET
+                                     `product_id`    = '" . (int)$new_product_id . "',
+                                     `sku`           = '" . $this->db->escape($sku) . "',
+                                     `stock`         = '" . (int)$old_product_variant['stock'] . "',
+                                     `active`        = '" . (int)$old_product_variant['active'] . "',
+                                     `subtract`      = '" . (int)$old_product_variant['subtract'] . "',
+                                     `price`         = '" . (float)$old_product_variant['price'] . "',
+                                     `image`         = '" . $this->db->escape($old_product_variant['image']) . "',
+                                     `weight`        = '" . $this->db->escape($old_product_variant['weight']) . "'
+                                WHERE
+                                     `product_option_variant_id`  = '" . (int)$new_product_variant['product_option_variant_id'] . "'
+                            ");
+
+                            foreach ($old_product_variant['discounts'] as $discount) {
+                                $this->db->query("
+                                    INSERT INTO `" . DB_PREFIX . "product_option_variant_discount`
+                                    SET
+                                        `product_option_variant_id`     = '" . (int)$new_product_variant['product_option_variant_id'] . "',
+                                        `product_id`                    = '" . (int)$new_product_id . "',
+                                        `customer_group_id`             = '" . (int)$discount['customer_group_id'] . "',
+                                        `quantity`                      = '" . (int)$discount['quantity'] . "',
+                                        `price`                         = '" . (float)$discount['price'] . "',
+                                        `date_start`                    = '" . $this->db->escape($discount['date_start']) . "',
+                                        `date_end`                      = '" . $this->db->escape($discount['date_end']) . "'
+                                ");
+                            }
+
+                            foreach ($old_product_variant['specials'] as $special) {
+                                $this->db->query("
+                                    INSERT INTO " . DB_PREFIX . "product_option_variant_special
+                                    SET
+                                        `product_option_variant_id`     = '" . (int)$new_product_variant['product_option_variant_id'] . "',
+                                        `product_id`                    = '" . (int)$new_product_id . "',
+                                        `customer_group_id`             = '" . (int)$special['customer_group_id'] . "',
+                                        `price`                         = '" . (float)$special['price'] . "',
+                                        `date_start`                    = '" . $this->db->escape($special['date_start']) . "',
+                                        `date_end`                      = '" . $this->db->escape($special['date_end']) . "'
+                                ");
+                            }
+                        }
+                    }
+                }
+            ]]></add>
+        </operation>
+    </file>
+    <file name="admin/view/template/catalog/product_form.tpl">
+        <!-- Start: Removing regular SKU, Weight, Quantity and Subtract fields -->
+        <operation>
+            <search position="before" offset="1"><![CDATA[<label class="col-sm-2 control-label" for="input-sku"><span data-toggle="tooltip" title="<?php echo $help_sku; ?>"><?php echo $entry_sku; ?></span></label>]]></search>
+            <add><![CDATA[<!--]]></add>
+        </operation>
+        <operation>
+            <search position="after" offset="2"><![CDATA[<input type="text" name="sku" value="<?php echo $sku; ?>" placeholder="<?php echo $entry_sku; ?>" id="input-sku" class="form-control" />]]></search>
+            <add><![CDATA[-->]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="1"><![CDATA[<label class="col-sm-2 control-label" for="input-weight"><?php echo $entry_weight; ?></label>]]></search>
+            <add><![CDATA[<!--]]></add>
+        </operation>
+        <operation>
+            <search position="after" offset="2"><![CDATA[<input type="text" name="weight" value="<?php echo $weight; ?>" placeholder="<?php echo $entry_weight; ?>" id="input-weight" class="form-control" />]]></search>
+            <add><![CDATA[-->]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="1"><![CDATA[<label class="col-sm-2 control-label" for="input-quantity"><?php echo $entry_quantity; ?></label>]]></search>
+            <add><![CDATA[<!--]]></add>
+        </operation>
+        <operation>
+            <search position="after" offset="2"><![CDATA[<input type="text" name="quantity" value="<?php echo $quantity; ?>" placeholder="<?php echo $entry_quantity; ?>" id="input-quantity" class="form-control" />]]></search>
+            <add><![CDATA[-->]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="1"><![CDATA[<label class="col-sm-2 control-label" for="input-subtract"><?php echo $entry_subtract; ?></label>]]></search>
+            <add><![CDATA[<!--]]></add>
+        </operation>
+        <operation>
+            <search position="after" offset="10"><![CDATA[<select name="subtract" id="input-subtract" class="form-control">]]></search>
+            <add><![CDATA[-->]]></add>
+        </operation>
+        <!-- Finish: Removing regular SKU, Weight, Quantity and Subtract fields -->
+        <!-- Start: Add "os-option-input" class to hide current option value columns -->
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][weight_prefix]" class="form-control">]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][weight_prefix]" class="form-control">]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][quantity]" value="<?php echo $product_option_value['quantity']; ?>" placeholder="<?php echo $entry_quantity; ?>" class="form-control" /></td>]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][quantity]" value="<?php echo $product_option_value['quantity']; ?>" placeholder="<?php echo $entry_quantity; ?>" class="form-control" /></td>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-left"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][subtract]" class="form-control">]]></search>
+            <add><![CDATA[<td class="text-left os-option-input"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][subtract]" class="form-control">]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][price_prefix]" class="form-control">]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][price_prefix]" class="form-control">]]></add>
+        </operation>
+        <!-- Finish: Add "os-option-input" class to hide current option value columns -->
+        <!-- Start: Add "os-option-input" class to hide new option value columns -->
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><input type="text" name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][quantity]"]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><input type="text" name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][quantity]"]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-left"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][subtract]]]></search>
+            <add><![CDATA[<td class="text-left os-option-input"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][subtract]]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][price_prefix]]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][price_prefix]]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][weight_prefix]]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><select name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][weight_prefix]]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$('#option-value' + option_row + ' tbody').append(html);]]></search>
+            <add><![CDATA[
+                hasOptionChange();
+            ]]></add>
+        </operation>
+        <!-- Finish: Add "os-option-input" class to hide new option value columns -->
+        <!-- Start: Add "os-option-input" class to hide new options -->
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-right"><?php echo $entry_weight; ?></td>]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><?php echo $entry_weight; ?></td>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<td class="text-left"><?php echo $entry_subtract; ?></td>]]></search>
+            <add><![CDATA[<td class="text-left os-option-input"><?php echo $entry_subtract; ?></td>]]></add>
+        </operation>
+        <operation>
+            <search position="replace" index="1,3"><![CDATA[<td class="text-right"><?php echo $entry_quantity; ?></td>]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><?php echo $entry_quantity; ?></td>]]></add>
+        </operation>
+        <operation>
+            <search position="replace" index="1,4"><![CDATA[<td class="text-right"><?php echo $entry_price; ?></td>]]></search>
+            <add><![CDATA[<td class="text-right os-option-input"><?php echo $entry_price; ?></td>]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$('#option a[href=\'#tab-option' + option_row + '\']').tab('show');]]></search>
+            <add><![CDATA[hasOptionChange();]]></add>
+        </operation>
+        <!-- Finish: Add "os-option-input" class to hide new options -->
+        <operation>
+            <search position="replace"><![CDATA[<li><a href="#tab-option" data-toggle="tab"><?php echo $tab_option; ?></a></li>]]></search>
+            <add><![CDATA[
+                <li><a href="#tab-stock" data-toggle="tab"><?php echo $tab_stock; ?></a></li>
+                <li><a href="#tab-option" class="os-option" data-toggle="tab"><?php echo $tab_option; ?></a></li>
+                <li><a href="#tab-variant" class="os-variant" data-toggle="tab"><?php echo $tab_option_stock; ?></a></li>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<li><a href="#tab-discount"]]></search>
+            <add><![CDATA[<li><a href="#tab-discount" class="os-special-discount"]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<li><a href="#tab-special"]]></search>
+            <add><![CDATA[<li><a href="#tab-special" class="os-special-discount"]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<div class="tab-pane" id="tab-option">]]></search>
+            <add><![CDATA[
+                  <div class="tab-pane" id="tab-stock">
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label" for="input-has_option"><?php echo $entry_has_option; ?></label>
+                      <div class="col-sm-10">
+                        <select name="has_option" onchange="hasOptionChange();" class="form-control has_option" id="input-has_option">
+                          <?php if ($has_option == 2) { ?>
+                            <option value="2" selected="selected"><?php echo $text_yes_regular; ?></option>
+                            <option value="1"><?php echo $text_yes_openstock; ?></option>
+                            <option value="0"><?php echo $text_no; ?></option>
+                          <?php } elseif ($has_option == 1) { ?>
+                            <option value="2"><?php echo $text_yes_regular; ?></option>
+                            <option value="1" selected="selected"><?php echo $text_yes_openstock; ?></option>
+                            <option value="0"><?php echo $text_no; ?></option>
+                          <?php } else { ?>
+                            <option value="2"><?php echo $text_yes_regular; ?></option>
+                            <option value="1"><?php echo $text_yes_openstock; ?></option>
+                            <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                          <?php } ?>
+                        </select></div>
+                    </div>
+                    <div class="form-group os-stockcontrol-inputs">
+                      <label class="col-sm-2 control-label" for="input-sku"><span data-toggle="tooltip" title="<?php echo $help_sku; ?>"><?php echo $entry_sku; ?></span></label>
+                      <div class="col-sm-10">
+                        <input type="text" name="sku" value="<?php echo $sku; ?>" placeholder="<?php echo $entry_sku; ?>" id="input-sku" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="form-group os-stockcontrol-inputs">
+                      <label class="col-sm-2 control-label" for="input-weight"><?php echo $entry_weight; ?></label>
+                      <div class="col-sm-10">
+                        <input type="text" name="weight" value="<?php echo $weight; ?>" placeholder="<?php echo $entry_weight; ?>" id="input-weight" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="form-group os-stockcontrol-inputs">
+                      <label class="col-sm-2 control-label" for="input-quantity"><?php echo $entry_quantity; ?></label>
+                      <div class="col-sm-10">
+                        <input type="text" name="quantity" value="<?php echo $quantity; ?>" placeholder="<?php echo $entry_quantity; ?>" id="input-quantity" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="form-group os-stockcontrol-inputs">
+                      <label class="col-sm-2 control-label" for="input-subtract"><?php echo $entry_subtract; ?></label>
+                      <div class="col-sm-10">
+                        <select name="subtract" id="input-subtract" class="form-control">
+                          <?php if ($subtract) { ?>
+                          <option value="1" selected="selected"><?php echo $text_yes; ?></option>
+                          <option value="0"><?php echo $text_no; ?></option>
+                          <?php } else { ?>
+                          <option value="1"><?php echo $text_yes; ?></option>
+                          <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="2"><![CDATA[<ul class="nav nav-pills nav-stacked" id="option">]]></search>
+            <add><![CDATA[
+            <?php if (!empty($product_options)) { ?>
+                <div class="alert alert-warning"><i class="fa fa-check-circle"></i> <?php echo $lang_atn_adding; ?></div>
+            <?php } ?>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<div class="tab-pane" id="tab-special">]]></search>
+            <add><![CDATA[
+                <div class="tab-pane" id="tab-variant">
+                  <div class="table-responsive">
+                    <?php if (isset($error_openstock['warning'])) { ?>
+                        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_openstock['warning']; ?></div>
+                    <?php } ?>
+                    <table id="variant" class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <td class="text-left"><?php echo $entry_image; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_sku; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_mix; ?></td>
+                          <td class="text-left"><?php echo $entry_weight; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_groups; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_discount; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_stock; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_price; ?></td>
+                          <td class="text-left"><?php echo $entry_stockoption_subtract; ?></td>
+                          <td class="text-center"><?php echo $entry_stockoption_active; ?><br /><input type="checkbox" id="variant_active_change" onclick="variantActiveChange();" /></td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <?php foreach ($variants as $variant_id => $variant) { ?>
+                        <tr>
+                          <?php $variant_string = ''; foreach ($variant['variant_values'] as $sort_order => $variant_value) { ?>
+                            <?php $variant_string .= $variant_value['product_option_value_id'] . ':'; ?>
+                            <input type="hidden" name="variant[<?php echo $variant_id; ?>][variant_values][<?php echo $sort_order; ?>][product_option_value_id]" value="<?php echo $variant_value['product_option_value_id']; ?>" />
+                            <input type="hidden" name="variant[<?php echo $variant_id; ?>][variant_values][<?php echo $sort_order; ?>][product_option_variant_value_id]" value="<?php echo $variant_value['product_option_variant_value_id']; ?>" />
+                          <?php } ?>
+                          <input type="hidden" name="variant[<?php echo $variant_id; ?>][variant_string]" value="<?php echo rtrim($variant_string, ':'); ?>" />
+                          <input type="hidden" name="variant[<?php echo $variant_id; ?>][combination]" value="<?php echo $variant['combination']; ?>" />
+                          <td class="text-left">
+                            <?php if ($variant['thumb']) { ?>
+                            <a href="" id="thumb-image<?php echo $variant_id; ?>-variant" data-toggle="image" class="img-thumbnail"><img src="<?php echo $variant['thumb']; ?>" alt="" title="" /></a>
+                            <?php } else { ?>
+                            <a href="" id="thumb-image<?php echo $variant_id; ?>-variant" data-toggle="image" class="img-thumbnail"><i class="fa fa-camera fa-5x"></i></a>
+                            <?php } ?>
+                            <input type="hidden" name="variant[<?php echo $variant_id; ?>][image]" value="<?php echo $variant['image']; ?>" id="input-image<?php echo $variant_id; ?>-variant" />
+                          </td>
+                          <td class="text-left">
+                            <input type="text" name="variant[<?php echo $variant_id; ?>][sku]" value="<?php echo $variant['sku']; ?>" class="form-control" />
+                            <?php if (isset($error_openstock['variant'][rtrim($variant_string, ':')])) { ?>
+                                <div class="text-danger"><?php echo $error_openstock['variant'][rtrim($variant_string, ':')]; ?></div>
+                            <?php } ?>
+                          </td>
+                          <td class="text-left"><?php echo $variant['combination']; ?></td>
+                          <td class="text-left"><input type="text" name="variant[<?php echo $variant_id; ?>][weight]" value="<?php echo $variant['weight']; ?>" class="form-control" /></td>
+                          <td id="variant-special<?php echo $variant_id; ?>" class="text-left">
+                          <?php foreach ($variant['specials'] as $special) { ?>
+                            <table id="variant_special_<?php echo $variant_id; ?>_<?php echo $variant_special; ?>" class="table table-bordered">
+                              <tr>
+                                <td class="text-left">
+                                  <span><?php echo $entry_customer_group; ?></span>
+                                  <select name="variant[<?php echo $variant_id; ?>][specials][<?php echo $variant_special; ?>][customer_group_id]" class="form-control">
+                                    <?php foreach ($customer_groups as $customer_group) { ?>
+                                      <?php if ($customer_group['customer_group_id'] == $special['customer_group_id']) { ?>
+                                        <option value="<?php echo $customer_group['customer_group_id']; ?>" selected="selected"><?php echo $customer_group['name']; ?></option>
+                                      <?php } else { ?>
+                                        <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo $customer_group['name']; ?></option>
+                                      <?php } ?>
+                                    <?php } ?>
+                                  </select>
+                                </td>
+                                <td class="text-left">
+                                  <span><?php echo $entry_price; ?></span>
+                                  <input type="text" name="variant[<?php echo $variant_id; ?>][specials][<?php echo $variant_special; ?>][price]" value="<?php echo $special['price']; ?>" class="form-control" />
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="text-left">
+                                  <span><?php echo $entry_date_start; ?></span>
+                                  <div class="input-group date">
+                                    <input type="text" name="variant[<?php echo $variant_id; ?>][specials][<?php echo $variant_special; ?>][date_start]" value="<?php echo $special['date_start']; ?>" placeholder="<?php echo $entry_date_start; ?>" <?php echo $data_date; ?> class="form-control" />
+                                    <span class="input-group-btn os-date">
+                                      <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                  </div>
+                                </td>
+                                <td class="text-left">
+                                  <span><?php echo $entry_date_end; ?></span>
+                                  <div class="input-group date">
+                                    <input type="text" name="variant[<?php echo $variant_id; ?>][specials][<?php echo $variant_special; ?>][date_end]" value="<?php echo $special['date_end']; ?>" placeholder="<?php echo $entry_date_end; ?>" <?php echo $data_date; ?> class="form-control" />
+                                    <span class="input-group-btn os-date">
+                                      <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <button type="button" onclick="$('#variant_special_<?php echo $variant_id; ?>_<?php echo $variant_special; ?>').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                </td>
+                              </tr>
+                            </table>
+                            <?php $variant_special++; } ?>
+                            <button id="add_variant_special<?php echo $variant_id; ?>" type="button" onclick="addVariantSpecial('<?php echo $variant_id; ?>');" data-toggle="tooltip" title="<?php echo $button_special_add; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                          </td>
+                          <td id="variant-discount<?php echo $variant_id; ?>" class="text-left">
+                          <?php foreach ($variant['discounts'] as $discount) { ?>
+                            <table id="variant_discount_<?php echo $variant_id; ?>_<?php echo $variant_discount; ?>" class="table table-bordered">
+                              <tr>
+                                <td class="text-left">
+                                  <span><?php echo $entry_customer_group; ?></span>
+                                  <select name="variant[<?php echo $variant_id; ?>][discounts][<?php echo $variant_discount; ?>][customer_group_id]" class="form-control">
+                                    <?php foreach ($customer_groups as $customer_group) { ?>
+                                      <?php if ($customer_group['customer_group_id'] == $discount['customer_group_id']) { ?>
+                                        <option value="<?php echo $customer_group['customer_group_id']; ?>" selected="selected"><?php echo $customer_group['name']; ?></option>
+                                      <?php } else { ?>
+                                        <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo $customer_group['name']; ?></option>
+                                      <?php } ?>
+                                    <?php } ?>
+                                  </select>
+                                </td>
+                                <td class="text-left">
+                                  <span><?php echo $entry_quantity; ?></span>
+                                  <input type="text" name="variant[<?php echo $variant_id; ?>][discounts][<?php echo $variant_discount; ?>][quantity]" value="<?php echo $discount['quantity']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-left">
+                                  <span><?php echo $entry_price; ?></span>
+                                  <input type="text" name="variant[<?php echo $variant_id; ?>][discounts][<?php echo $variant_discount; ?>][price]" value="<?php echo $discount['price']; ?>" class="form-control" />
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="text-left">
+                                  <span><?php echo $entry_date_start; ?></span>
+                                  <div class="input-group date">
+                                    <input type="text" name="variant[<?php echo $variant_id; ?>][discounts][<?php echo $variant_discount; ?>][date_start]" value="<?php echo $discount['date_start']; ?>" placeholder="<?php echo $entry_date_start; ?>" <?php echo $data_date; ?> class="form-control" />
+                                    <span class="input-group-btn os-date">
+                                      <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                  </div>
+                                </td>
+                                <td class="text-left">
+                                  <span><?php echo $entry_date_end; ?></span>
+                                  <div class="input-group date">
+                                    <input type="text" name="variant[<?php echo $variant_id; ?>][discounts][<?php echo $variant_discount; ?>][date_end]" value="<?php echo $discount['date_end']; ?>" placeholder="<?php echo $entry_date_end; ?>" <?php echo $data_date; ?> class="form-control" />
+                                    <span class="input-group-btn os-date">
+                                      <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <button type="button" onclick="$('#variant_discount_<?php echo $variant_id; ?>_<?php echo $variant_discount; ?>').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                </td>
+                              </tr>
+                            </table>
+                            <?php $variant_discount++; } ?>
+                            <button id="add_variant_discount<?php echo $variant_id; ?>" type="button" onclick="addVariantDiscount('<?php echo $variant_id; ?>');" data-toggle="tooltip" title="<?php echo $button_discount_add; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                          </td>
+                          <td class="text-left"><input type="text" name="variant[<?php echo $variant_id; ?>][stock]" value="<?php echo $variant['stock']; ?>" class="form-control" /></td>
+                          <td class="text-left"><input type="text" name="variant[<?php echo $variant_id; ?>][price]" value="<?php echo $variant['price']; ?>" class="form-control" /></td>
+                          <td class="text-left">
+                            <select name="variant[<?php echo $variant_id; ?>][subtract]" class="form-control">
+                              <?php if ($variant['subtract']) { ?>
+                                <option value="1" selected="selected"><?php echo $text_yes; ?></option>
+                                <option value="0"><?php echo $text_no; ?></option>
+                              <?php } else { ?>
+                                <option value="1"><?php echo $text_yes; ?></option>
+                                <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                              <?php } ?>
+                            </select>
+                          </td>
+                          <td class="text-center">
+                            <div class="checkbox">
+                              <label>
+                                <input type="hidden" name="variant[<?php echo $variant_id; ?>][active]" value="0" />
+                                <?php if ($variant['active'] == '1') { ?>
+                                  <input type="checkbox" class="variant_active" name="variant[<?php echo $variant_id; ?>][active]" value="1" checked="checked" />
+                                <?php } else { ?>
+                                  <input type="checkbox" class="variant_active" name="variant[<?php echo $variant_id; ?>][active]" value="1" />
+                                <?php } ?>
+                              </label>
+                            </div>
+                          </td>
+                        </tr>
+                      <?php } ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add><![CDATA[
+                <script type="text/javascript"><!--
+                function hasOptionChange() {
+                    var has_option = $('.has_option').val();
+                    if (has_option == 1) {
+                        $('.os-stockcontrol-inputs').hide();
+                        $('.os-option').show();
+                        $('.os-variant').show();
+                        <?php if ($openstock_show_special_discount_tab == 0) { ?>
+                            $('.os-special-discount').hide();
+                        <?php } else { ?>
+                            $('.os-special-discount').show();
+                        <?php } ?>
+                        $('.os-option-input').hide();
+
+                        $('.os-colspan').attr('colspan', 2);
+
+                        $('.os-warning').show();
+
+                        $('.os-option-input input').val('0');
+                        $('.os-option-subtract').val('0');
+                    } else if (has_option == 2) {
+                        $('.os-stockcontrol-inputs').show();
+                        $('.os-option').show();
+                        $('.os-variant').hide();
+                        $('.os-special-discount').show();
+                        $('.os-option-input').show();
+
+                        $('.os-colspan').attr('colspan', 6);
+
+                        $('.os-warning').hide();
+                    } else {
+                        $('.os-stockcontrol-inputs').show();
+                        $('.os-option').hide();
+                        $('.os-variant').hide();
+                        $('.os-special-discount').show();
+                        $('.os-option-input').show();
+
+                        $('.os-colspan').attr('colspan', 6);
+
+                        $('.os-warning').hide();
+                    }
+                }
+
+                function variantActiveChange() {
+                    var checked = $('#variant_active_change').prop('checked');
+
+                    if (checked == true) {
+                        $('.variant_active').prop('checked', true);
+                    } else {
+                        $('.variant_active').prop('checked', false);
+                    }
+                }
+
+                var variant_discount = <?php echo $variant_discount; ?>;
+
+                function addVariantDiscount(variant_id) {
+                    var html = '';
+                    html += '<table id="variant_discount_' + variant_id + '_' + variant_discount + '" class="table table-bordered">';
+                    html += '  <tr>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_customer_group; ?></span>';
+                    html += '      <select name="variant[' + variant_id + '][discounts][' + variant_discount + '][customer_group_id]" class="form-control">';
+                    <?php foreach ($customer_groups as $customer_group) { ?>
+                    html += '        <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo $customer_group['name']; ?></option>';
+                    <?php } ?>
+                    html += '      </select>';
+                    html += '    </td>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_quantity; ?></span>';
+                    html += '      <input type="text" name="variant[' + variant_id + '][discounts][' + variant_discount + '][quantity]" placeholder="<?php echo $entry_quantity; ?>"  class="form-control" />';
+                    html += '    </td>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_price; ?></span>';
+                    html += '      <input type="text" name="variant[' + variant_id + '][discounts][' + variant_discount + '][price]" placeholder="<?php echo $entry_price; ?>" class="form-control" />';
+                    html += '    </td>';
+                    html += '  </tr>';
+                    html += '  <tr>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_date_start; ?></span>';
+                    html += '      <div class="input-group date">';
+                    html += '        <input type="text" name="variant[' + variant_id + '][discounts][' + variant_discount + '][date_start]" placeholder="<?php echo $entry_date_start; ?>" <?php echo $data_date; ?> class="form-control" />';
+                    html += '        <span class="input-group-btn os-date">';
+                    html += '          <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+                    html += '        </span>';
+                    html += '      </div>';
+                    html += '    </td>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_date_end; ?></span>';
+                    html += '      <div class="input-group date">';
+                    html += '        <input type="text" name="variant[' + variant_id + '][discounts][' + variant_discount + '][date_end]" placeholder="<?php echo $entry_date_end; ?>" <?php echo $data_date; ?> class="form-control" />';
+                    html += '        <span class="input-group-btn os-date">';
+                    html += '          <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+                    html += '        </span>';
+                    html += '      </div>';
+                    html += '    </td>';
+                    html += '    <td class="text-center">';
+                    html += '      <button type="button" onclick="$(\'#variant_discount_' + variant_id + '_' + variant_discount + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>';
+                    html += '    </td>';
+                    html += '  </tr>';
+                    html += '</table>';
+
+                    $('#add_variant_discount' + variant_id).before(html);
+
+                    $('.date').datetimepicker({
+                        pickTime: false
+                    });
+
+                    variant_discount++;
+                }
+
+                var variant_special = <?php echo $variant_special; ?>;
+
+                function addVariantSpecial(variant_id) {
+                    var html = '';
+                    html += '<table id="variant_special_' + variant_id + '_' + variant_special + '" class="table table-bordered">';
+                    html += '  <tr>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_customer_group; ?></span>';
+                    html += '      <select name="variant[' + variant_id + '][specials][' + variant_special + '][customer_group_id]" class="form-control">';
+                    <?php foreach ($customer_groups as $customer_group) { ?>
+                    html += '        <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo $customer_group['name']; ?></option>';
+                    <?php } ?>
+                    html += '      </select>';
+                    html += '    </td>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_price; ?></span>';
+                    html += '      <input type="text" name="variant[' + variant_id + '][specials][' + variant_special + '][price]" placeholder="<?php echo $entry_price; ?>" class="form-control" />';
+                    html += '    </td>';
+                    html += '  </tr>';
+                    html += '  <tr>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_date_start; ?></span>';
+                    html += '      <div class="input-group date">';
+                    html += '        <input type="text" name="variant[' + variant_id + '][specials][' + variant_special + '][date_start]" placeholder="<?php echo $entry_date_start; ?>" <?php echo $data_date; ?> class="form-control" />';
+                    html += '        <span class="input-group-btn os-date">';
+                    html += '          <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+                    html += '        </span>';
+                    html += '      </div>';
+                    html += '    </td>';
+                    html += '    <td class="text-left">';
+                    html += '      <span><?php echo $entry_date_end; ?></span>';
+                    html += '      <div class="input-group date">';
+                    html += '        <input type="text" name="variant[' + variant_id + '][specials][' + variant_special + '][date_end]" placeholder="<?php echo $entry_date_end; ?>" <?php echo $data_date; ?> class="form-control" />';
+                    html += '        <span class="input-group-btn os-date">';
+                    html += '          <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>';
+                    html += '        </span>';
+                    html += '      </div>';
+                    html += '    </td>';
+                    html += '    <td class="text-center">';
+                    html += '      <button type="button" onclick="$(\'#variant_special_' + variant_id + '_' + variant_special + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>';
+                    html += '    </td>';
+                    html += '  </tr>';
+                    html += '</table>';
+
+                    $('#add_variant_special' + variant_id).before(html);
+
+                    $('.date').datetimepicker({
+                        pickTime: false
+                    });
+
+                    variant_special++;
+                }
+
+                 $(document).ready(function() { hasOptionChange(); });
+                //--></script>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace" index="1,3"><![CDATA[<td colspan="6"]]></search>
+            <add><![CDATA[<td class="os-colspan" colspan="6"]]></add>
+        </operation>
+        <operation>
+            <search position="replace" index="1,3"><![CDATA[[subtract]" class="form-control"]]></search>
+            <add><![CDATA[[subtract]" class="form-control os-option-subtract"]]></add>
+        </operation>
+    </file>
+    <file name="catalog/controller/product/product.php">
+        <operation>
+            <search position="after"><![CDATA[$data['heading_title'] = $product_info['name'];]]></search>
+            <add><![CDATA[
+                $this->document->addStyle('catalog/view/theme/default/stylesheet/openstock.css');
+
+                $this->language->load('module/openstock');
+                $data['text_checking_options'] = $this->language->get('text_checking_options');
+                $data['openstock_show_default_price'] = $this->config->get('openstock_show_default_price');
+                $data['openstock_dependant_options'] = $this->config->get('openstock_dependant_options');
+
+                $data['has_option'] = $product_info['has_option'];
+                $data['subtract'] = $product_info['subtract'];
+            ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/model/catalog/product.php">
+        <operation>
+            <search position="after"><![CDATA[$query->row['product_id'],]]></search>
+            <add><![CDATA[
+                'has_option' => (isset($query->row['has_option'])) ? $query->row['has_option'] : 0,
+            ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/model/checkout/order.php">
+        <operation>
+            <search position="before"><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");]]></search>
+            <add><![CDATA[
+                $this->load->model('catalog/product');
+
+                $product = $this->model_catalog_product->getProduct($order_product['product_id']);
+
+                //If product is OpenStock.
+                if (isset($product['has_option']) && $product['has_option'] == 1) {
+                    //Stock subtraction - OpenStock
+                    $this->load->model('module/openstock');
+
+                    $order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product['order_product_id'] . "'");
+
+                    if ($order_option_query->num_rows) {
+                        $options = array();
+
+                        foreach ($order_option_query->rows as $option) {
+                            $options[] = $option['product_option_value_id'];
+                        }
+
+                        $variant = $this->model_module_openstock->getVariantByOptionValues($options, $product['product_id']);
+
+                        if ($variant) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "product_option_variant SET stock = (stock - " . (int)$order_product['quantity'] . ") WHERE product_option_variant_id = '" . (int)$variant['product_option_variant_id'] . "' AND subtract = '1'");
+                        }
+                    }
+
+                    continue;
+                }
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[$this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = (quantity + " . (int)$product['quantity'] . ") WHERE product_id = '" . (int)$product['product_id'] . "' AND subtract = '1'");]]></search>
+            <add><![CDATA[
+                $this->load->model('catalog/product');
+
+                $product = $this->model_catalog_product->getProduct($order_product['product_id']);
+
+                //If product is OpenStock.
+                if (isset($product['has_option']) && $product['has_option'] == 1) {
+                    //Stock subtraction - OpenStock
+                    $this->load->model('module/openstock');
+
+                    $order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product['order_product_id'] . "'");
+
+                    if ($order_option_query->num_rows) {
+                        $options = array();
+
+                        foreach ($order_option_query->rows as $option) {
+                            $options[] = $option['product_option_value_id'];
+                        }
+
+                        $variant = $this->model_module_openstock->getVariantByOptionValues($options, $product['product_id']);
+
+                        if ($variant) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "product_option_variant SET stock = (stock + " . (int)$order_product['quantity'] . ") WHERE product_option_variant_id = '" . (int)$variant['product_option_variant_id'] . "' AND subtract = '1'");
+                        }
+                    }
+
+                    continue;
+                }
+            ]]></add>
+        </operation>
+    </file>
+    <file name="system/library/cart.php">
+        <operation>
+            <search position="after"><![CDATA[public function __construct($registry) {]]></search>
+            <add><![CDATA[$this->registry = $registry;]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[public function getProducts() {]]></search>
+            <add><![CDATA[
+                public function __get($name) {
+                    return $this->registry->get($name);
+                }
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[$product_query->row['model'],]]></search>
+            <add><![CDATA[$sku,]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[($product_query->row['weight'] + $option_weight) * $quantity,]]></search>
+            <add><![CDATA[$weight,]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[$product_query->row['image'],]]></search>
+            <add><![CDATA[$image,]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[$this->data[$key] = array(]]></search>
+            <add><![CDATA[
+                    $weight = ($product_query->row['weight'] + $option_weight) * $quantity;
+                    $sku = $product_query->row['model'];
+                    $image = $product_query->row['image'];
+
+                    if (isset($product_query->row['has_option']) && ($product_query->row['has_option'] == 1)) {
+                        $this->load->model('module/openstock');
+
+                        $variant = $this->model_module_openstock->getVariantByOptionValues($options, $product_id);
+
+                        if ($variant) {
+                            $stock = true;
+
+                            $price = $variant['price'];
+
+                            $discount = $this->model_module_openstock->getVariantDiscount($product_id, $variant['product_option_variant_id'], $quantity);
+
+                            if ($discount) {
+                                $price = $discount['price'];
+                            }
+
+                            $special = $this->model_module_openstock->getVariantSpecial($product_id, $variant['product_option_variant_id']);
+
+                            if ($special) {
+                                $price = $special['price'];
+                            }
+
+                            if ($variant['weight']) {
+                                $weight = $variant['weight'] * $quantity;
+	                        }
+
+                            if ($variant['subtract'] && ($variant['stock'] < 1 || $variant['stock'] < $quantity)) {
+                                $stock = false;
+                            }
+
+                            if ($variant['sku']) {
+                                $sku = $variant['sku'];
+                            } elseif ($product_query->row['sku']) {
+                                $sku = $product_query->row['sku'];
+                            }
+
+                            if ($variant['image']) {
+                                $image = $variant['image'];
+                            }
+                        }
+                    }
+            ]]></add>
+        </operation>
+    </file>
+</modification>

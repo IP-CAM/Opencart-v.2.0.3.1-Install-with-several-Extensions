@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>OpenStock 2 template customise</id>
+    <version>15</version>
+    <vqmver>2.5.0</vqmver>
+    <author>Welford Media</author>
+    <file name="catalog/view/theme/*/template/product/product.tpl">
+        <operation>
+            <search position="replace"><![CDATA[<li><?php echo $text_stock; ?> <?php echo $stock; ?></li>]]></search>
+            <add><![CDATA[<?php if ($has_option == 0) { ?><li><?php echo $text_stock; ?> <?php echo $stock; ?></li><?php } ?>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<li><?php echo $text_model; ?> <?php echo $model; ?></li>]]></search>
+            <add><![CDATA[<li class="os-model"><?php echo $text_model; ?> <?php echo $model; ?></li>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<select name="option[<?php echo $option['product_option_id']; ?>]" id="input-option<?php echo $option['product_option_id']; ?>" class="form-control">]]></search>
+            <add><![CDATA[<select name="option[<?php echo $option['product_option_id']; ?>]" id="input-option<?php echo $option['product_option_id']; ?>" class="form-control option-choice">]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<input type="radio" name="option]]></search>
+            <add><![CDATA[<input class="option-choice" type="radio" name="option]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="1"><![CDATA[<?php if ($recurrings) { ?>]]></search>
+            <add><![CDATA[<input type="hidden" name="option_numbers" value="<?php echo $i; ?>" id="option-numbers" />]]></add>
+        </operation>
+        <operation>
+            <search position="before" offset="1"><![CDATA[<label class="control-label" for="input-quantity"><?php echo $entry_qty; ?></label>]]></search>
+            <add><![CDATA[<div id="product-cart">]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<?php if ($minimum > 1) { ?>]]></search>
+            <add><![CDATA[</div>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[foreach ($options as $option) { ?>]]></search>
+            <add><![CDATA[$i = 0; foreach ($options as $option) { ?>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<?php if ($option['type'] == 'radio') { ?>]]></search>
+            <add><![CDATA[<?php if ($option['type'] == 'radio') { $i++;?>]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<?php if ($option['type'] == 'select') {]]></search>
+            <add><![CDATA[<?php if ($option['type'] == 'select') { $i++;]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<?php if ($option['type'] == 'image') {]]></search>
+            <add><![CDATA[<?php if ($option['type'] == 'image') { $i++;]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<?php if ($option_value['price']) { ?>]]></search>
+            <add><![CDATA[<?php if ($option_value['price'] && $has_option != 1) { ?>]]></add>
+        </operation>
+        <operation>
+            <search position="replace" index="2"><![CDATA[<ul class="list-unstyled">]]></search>
+            <add><![CDATA[<ul class="list-unstyled os-price">]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<li><a class="thumbnail"]]></search>
+            <add><![CDATA[<li class="os-image-main"><a class="thumbnail"]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add><![CDATA[
+<?php if ($has_option == 1) { ?>
+    <script type="text/javascript"><!--
+    var original_thumb = '<?php echo $thumb; ?>';
+    var original_pop = '<?php echo $popup; ?>';
+    var openstock_dependant_options = '<?php echo $openstock_dependant_options; ?>';
+
+    optionChoice();
+
+    $('.option-choice').change(function() {
+        optionChoice(this);
+    });
+
+    function optionChoice(that) {
+        if (typeof that === 'undefined') { that = ''; }
+
+        $('.os-success, .os-danger, .os-hr').remove();
+
+        if (openstock_dependant_options === '1') {
+            if (that) {
+                var chosen = $(that).val();
+            } else {
+                var chosen = '';
+            }
+
+            if ($(that).find(':checked').hasClass('os-hidden') || $(that).hasClass('os-hidden')) {
+                $('.option-choice option:selected, .option-choice:checked').each(function() {
+                    if (chosen !== $(this).val()) {
+                        $($(this).parent()).prop('selectedIndex', 0);
+                        $(this).prop('checked', false);
+                    }
+
+                    if ($('.option-choice').length === 1) {
+                        $($(this).parent()).prop('selectedIndex', 0);
+                        $(this).prop('checked', false);
+                    }
+                });
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?route=module/openstock/option',
+                dataType: 'json',
+                data: $('input[name=\'product_id\'], #product input[type=\'radio\']:checked, #product select'),
+                success: function(data) {
+                    for (var i = 0; i < data.hide.length; i++) {
+                        $('.option-choice option[value=' + data.hide[i] + ']').addClass('os-hidden');
+                        $('.option-choice[value=' + data.hide[i] + ']').addClass('os-hidden');
+                        $('.option-choice[value=' + data.hide[i] + ']').parent('label').addClass('os-hidden');
+
+                        $('.option-choice option:selected, .option-choice:checked').each(function() {
+                            if ($(this).val() === data.hide[i]) {
+                                $($(this).parent()).prop('selectedIndex', 0);
+                                $(this).prop('checked', false);
+                            }
+                        });
+                    }
+
+                    for (var i = 0; i < data.show.length; i++) {
+                        $('.option-choice option[value=' + data.show[i] + ']').removeClass('os-hidden');
+                        $('.option-choice[value=' + data.show[i] + ']').removeClass('os-hidden');
+                        $('.option-choice[value=' + data.show[i] + ']').parent('label').removeClass('os-hidden');
+                    }
+
+                    getVariant();
+                }
+            });
+        } else {
+            getVariant();
+        }
+    }
+
+    function getVariant() {
+        var option_ids = [];
+        $('.option-choice option:selected, .option-choice:checked').each(function() {
+            if ($(this).val() != '') {
+                option_ids.push($(this).val());
+            }
+        });
+
+        if (option_ids.length == $('#option-numbers').val()) {
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?route=module/openstock/variant',
+                dataType: 'json',
+                data: {
+                    ids: option_ids,
+                    product_id: '<?php echo $product_id; ?>'
+                },
+                beforeSend: function() {
+                    $('.os-success, .os-danger, .os-hr').remove();
+                    $('#product').before('<hr class="os-hr"><div class="os-loading"><i class="fa fa-circle-o-notch fa-spin"></i> <?php echo $text_checking_options; ?></div>');
+                    $('.os-price').html('').hide();
+                },
+                success: function(data) {
+                    setTimeout(function() {
+                        if (data.error) {
+                            $('.os-loading').removeClass('os-loading').addClass('os-danger').empty().text(data.error);
+                            $('#product-cart').hide();
+                            return;
+                        }
+
+                        if (data.data.sku) {
+                            $('.os-model').text('<?php echo $text_model; ?> '+data.data.sku);
+                        } else {
+                            $('.os-model').text('<?php echo $text_model; ?> <?php echo $model; ?>');
+                        }
+
+                        string_price = '';
+
+                        if (!data.data.special) {
+                            string_price += '<li><h2>'+data.data.price+'</h2></li>';
+                        } else {
+                            string_price += '<li><span style="text-decoration: line-through;">'+data.data.price+'</span></li>';
+                            string_price += '<li><h2>'+data.data.special+'</h2></li>';
+                        }
+
+                        string_price += '<?php if ($tax) { ?><li><?php echo $text_tax; ?> '+data.data.tax+'</li><?php } ?>';
+
+                        string_discount = '';
+                        if (data.data.discount) {
+                            string_discount = '<li><hr></li>';
+
+                            $.each(data.data.discount, function(key, discount) {
+                                string_discount += '<li>'+discount.quantity+'<?php echo $text_discount; ?>'+discount.price;
+                            });
+                        }
+
+                        if (data.success) {
+                            $('.os-loading').removeClass('os-loading').addClass('os-success').empty().html('<i class="fa fa-check-circle"></i> '+data.success);
+                            $('.os-price').html(string_price).append(string_discount).show();
+                            $('#product-cart').show();
+                        }
+
+                        if (data.nostock) {
+                            $('.os-loading').removeClass('os-loading').addClass('os-danger').empty().html('<i class="fa fa-exclamation-circle"></i> '+data.nostock);
+                            $('.os-price').html(string_price).append(string_discount).show();
+
+                            if (data.nostockcheckout == 1) {
+                                $('#product-cart').show();
+                            } else {
+                                $('#product-cart').hide();
+                            }
+                        }
+
+                        if (data.notactive) {
+                            $('.os-loading').removeClass('os-loading').addClass('os-danger').empty().html('<i class="fa fa-exclamation-circle"></i> '+data.notactive);
+                            $('.os-price').html(string_price).append(string_discount).show();
+                            $('#product-cart').hide();
+                        }
+
+                        if (data.data.image != '') {
+                            $('.os-image-main a img').attr('src', data.data.thumb);
+                            $('.os-image-main a').attr('href', data.data.pop);
+                        } else {
+                            $('.os-image-main a img').attr('src', original_thumb);
+                            $('.os-image-main a').attr('href', original_pop);
+                        }
+                    }, 500);
+                }
+            });
+        }
+    }
+
+    <?php if ($openstock_show_default_price == '0') { ?>
+        $(function() { $('.os-price').html('').hide(); });
+    <?php } ?>
+
+    //--></script>
+<?php } ?>
+]]></add>
+        </operation>
+    </file>
+</modification>
