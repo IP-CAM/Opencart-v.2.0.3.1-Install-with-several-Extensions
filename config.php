@@ -24,4 +24,5 @@ define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'opencart2');
 define('DB_PASSWORD', 'opencart2');
 define('DB_DATABASE', 'opencart2');
+define('DB_PORT', '3306');
 define('DB_PREFIX', 'oc_');
