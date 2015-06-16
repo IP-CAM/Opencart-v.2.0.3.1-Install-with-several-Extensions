@@ -1,0 +1,8 @@
+image/cache
+image/catalog
+system/cache
+system/logs
+system/upload
+vqmod/*.cache
+vqmod/vqcache
+vqmod/logs
