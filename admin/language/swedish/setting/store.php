@@ -1,0 +1,124 @@
+<?php
+// Heading
+$_['heading_title']                = 'Butiker';
+
+// Text
+$_['text_settings']                    = 'Inställningar';
+$_['text_success']                 = 'Klart: Dina ändringar i inställningar är utförda!';
+$_['text_list']                        = 'Butiker';
+$_['text_add']                         = 'Lägg till butik';
+$_['text_edit']                        = 'Redigera butik';
+$_['text_items']                       = 'Produkter';
+$_['text_tax']                         = 'Skatter';
+$_['text_account']                     = 'Konto';
+$_['text_checkout']                    = 'Kassa';
+$_['text_stock']                       = 'Lager';
+$_['text_shipping']                = 'Leveransadress';
+$_['text_payment']                 = 'Betalningsadress';
+
+// Column
+$_['column_name']                  = 'Namn';
+$_['column_url']	               = 'Länk';
+$_['column_action']                = 'Åtgärd';
+
+// Entry
+$_['entry_url']                    = 'Butikens webbadress';
+$_['entry_ssl']                    = 'SSL-adress';
+$_['entry_name']                   = 'Butikens namn';
+$_['entry_owner']                  = 'Butikens ägare';
+$_['entry_address']                = 'Adress';
+$_['entry_geocode']                    = 'Geozon';
+$_['entry_email']                  = 'E-post';
+$_['entry_telephone']              = 'Telefon';
+$_['entry_fax']                    = 'Fax';
+$_['entry_image']                      = 'Bild';
+$_['entry_open']                       = 'Öppettider';
+$_['entry_comment']                    = 'Kommentar';
+$_['entry_location']                   = 'Butikens plats';
+$_['entry_meta_title']                 = 'Meta titel';
+$_['entry_meta_description']       = 'Meta-tagg beskrivning';
+$_['entry_meta_keyword']               = 'Meta-tagg nyckelord';
+$_['entry_layout']                 = 'Standard layout';
+$_['entry_template']               = 'Mall';
+$_['entry_country']                = 'Land';
+$_['entry_zone']                   = 'Län';
+$_['entry_language']               = 'Språk';
+$_['entry_currency']               = 'Valuta';
+$_['entry_product_limit'] 	           = 'Antal produkter per sida (Katalog)';
+$_['entry_product_description_length'] = 'Gräns för beskrivning (Katalog)';
+$_['entry_tax']                    = 'Visa priser inkl moms';
+$_['entry_tax_default']            = 'Använd butikens skatteadress';
+$_['entry_tax_customer']           = 'Använd kundens skattadress';
+$_['entry_customer_group']             = 'Kundgrupp';
+$_['entry_customer_group_display']     = 'Kundgrupper';
+$_['entry_customer_price']             = 'Logga in för att se priser';
+$_['entry_account']                    = 'Kontovillkor';
+$_['entry_cart_weight']            = 'Visa frakt i varukorgen';
+$_['entry_checkout_guest']             = 'Gästkassa';
+$_['entry_checkout']      	       = 'Köpvillkor';
+$_['entry_order_status']           = 'Orderstatus';
+$_['entry_stock_display']          = 'Visa lager';
+$_['entry_stock_checkout']         = 'Köp utan lager';
+$_['entry_logo']                   = 'Butikslogo';
+$_['entry_icon']                   = 'Ikon';
+$_['entry_image_category']		   = 'Bildstorlek kategori';
+$_['entry_image_thumb']            = 'Bildstorlek produkt-tumnagel';
+$_['entry_image_popup']            = 'Bildstorlek produkt-popup';
+$_['entry_image_product']          = 'Bildstorlek produktlista';
+$_['entry_image_additional']       = 'Bildstorlek extra bilder';
+$_['entry_image_related']          = 'Bildstorlek relaterade produkter';
+$_['entry_image_compare']          = 'Bildstorlek jämför produkt';
+$_['entry_image_wishlist']         = 'Bildstorlek önskelista';
+$_['entry_image_cart']             = 'Bildstorlek varukorg';
+$_['entry_image_location']             = 'Bildstorlek butik';
+$_['entry_width']                      = 'Bredd';
+$_['entry_height']                     = 'Höjd';
+$_['entry_secure']                     = 'Använd SSL';
+// Help
+$_['help_url']                         = 'Inkludera hela webbadressen till din butik. Se till att lägga till \'/\' i slutet. Exempel: http://www.yourdomain.com/path/ <br /> <br /> använda inte kataloger för att skapa en ny butik. Du bör alltid peka en annan domän eller subdomän till ditt webbhotell.';
+$_['help_ssl']                         = 'SSL URL till din butik. Se till att lägga till \'/\' i slutet.. Exempel: http://www.yourdomain.com/path/ <br /> <br /> använda inte kataloger för att skapa en ny butik. Du bör alltid peka en annan domän eller subdomän till ditt webbhotell.';
+$_['help_geocode']                     = 'Ange din butiks plats geocode manuellt.';
+$_['help_open']                        = 'Fyll i dina butiker öppettider.';
+$_['help_comment']                     = 'Detta fält är för särskilda anteckningar som du vill berätta för kunden i T.ex. Vi tar ej betalkort.';
+$_['help_location']                    = 'De olika butikslägen du har som du vill ska visas på kontakta oss formulär.';
+$_['help_currency']                    = 'Ändra standardvaluta. Rensa webbläsarens cache för att se förändringen och återställa din befintliga cokkies.';
+$_['help_product_limit'] 	           = 'Avgör hur många kataloger och produkter som ska visas per sida (produkter, kategorier, etc.)';
+$_['help_product_description_length']  = 'Antal tillåtna tecken i listan kort beskrivning (kategorier, erbjudande etc)';
+$_['help_tax_default']                 = 'Använd butiksadress för att beräkna skatter om ingen är inloggad. Du kan välja att använda butiksadress för kundernas leverans eller betalningsadress.';
+$_['help_tax_customer']                = 'Använd kunderna standard adress när de loggar in för att beräkna skatter. Du kan välja att använda standardadress för kunderernas leverans eller betalningsadress.';
+$_['help_customer_group']              = 'Standard kundgrupp.';
+$_['help_customer_group_display']      = 'Visa kundgrupper som nya kunder kan välja att använda som grossist och företag när dem registrerar sig.';
+$_['help_customer_price']              = 'Visa endast priser när kund är inloggad.';
+$_['help_account']                     = 'Förkryssad att kunder går med på villkoren innan ett konto kan skapas.';
+$_['help_checkout_guest']              = 'Tillåt kunder att använda kassan utan att skapa ett konto. Detta kommer inte att vara tillgänglig när en nedladdningsbar produkt har lagts i varukorgen .';
+$_['help_checkout']                    = 'Förkryssad att kunder går med på villkoren innan en beställning kan slutföras.';
+$_['help_order_status']                = 'Ange standard orderstatus när en order behandlas.';
+$_['help_stock_display']               = 'Visa lager kvantitet på produktsidan.';
+$_['help_stock_checkout']              = 'Tillåter kunder att genomföra köp i kassan även om produkten inte finns i lager.';
+$_['help_icon']                        = 'Ikonen ska vara en PNG som är 16px x 16px.';
+$_['help_secure']                      = 'Om du vill använda SSL-kontroll måste du se till att ditt webbhotell kan tillhanda ha SSL-certifikat.';
+
+// Error
+$_['error_warning']                = 'Varning: Kontrollera att samtliga obligatoriska fält är ifyllda!';
+$_['error_permission']             = 'Varning: Du har inte behörighet att ändra i inställningar!';
+$_['error_name']                   = 'Butikens namn måste innehålla mellan 3 och 32 tecken!';
+$_['error_owner']                  = 'Butikens ägare måste innehålla mellan 3 och 64 tecken!';
+$_['error_address']                = 'Butikens adress måste innehålla mellan 10 och 256 tecken!';
+$_['error_email']                  = 'E-postadressen är inte giltig!';
+$_['error_telephone']              = 'Telefonnummret måste innehålla mellan 3 och 32 tecken!';
+$_['error_url']                    = 'Butikens webbadress krävs!';
+$_['error_meta_title']                 = 'Titel måste innehålla mellan 3 och 32 tecken!';
+$_['error_limit']       	       = 'Antal ​​krävs!';
+$_['error_customer_group_display'] = 'Du måste ange standard kundgrupp!';
+$_['error_image_thumb']            = 'Bildstorlek tumnagel krävs!';
+$_['error_image_popup']            = 'Bildstorlek produkt-popup krävs!';
+$_['error_image_product']          = 'Bildstorlek produktlista krävs!';
+$_['error_image_category']         = 'Bildstorlek kategori krävs!';
+$_['error_image_additional']       = 'Bildstorlek extra bilder krävs!';
+$_['error_image_related']          = 'Bildstorlek relaterade produkter krävs!';
+$_['error_image_compare']          = 'Bildstorlek jämför produkt krävs!';
+$_['error_image_wishlist']         = 'Bildstorlek önskelista krävs!';
+$_['error_image_cart']             = 'Bildstorlek varukorg krävs!';
+$_['error_image_location']             = 'Bildstorlek för butikens bilder krävs!';
+$_['error_default']                = 'Varning: Du kan radera standardbutiken!';
+$_['error_store']                  = 'Varning: Denna butik kan inte raderas eftersom den för närvarande är kopplad till %s ordrar!';
