@@ -31,7 +31,7 @@
         
         
         
-        <li><a href="<?php echo $recurring; ?>"><?php echo $text_recurring; ?></a></li>
+        
       </ul>
       
       <ul class="list-unstyled">

@@ -6,7 +6,7 @@
   <?php if ($logged) { ?>
   <a href="<?php echo $edit; ?>" class="list-group-item"><?php echo $text_edit; ?></a> <a href="<?php echo $password; ?>" class="list-group-item"><?php echo $text_password; ?></a>
   <?php } ?>
-  <a href="<?php echo $address; ?>" class="list-group-item"><?php echo $text_address; ?></a>  <a href="<?php echo $order; ?>" class="list-group-item"><?php echo $text_order; ?></a> <a href="<?php echo $download; ?>" class="list-group-item"><?php echo $text_download; ?></a><a href="<?php echo $recurring; ?>" class="list-group-item"><?php echo $text_recurring; ?></a>    
+  <a href="<?php echo $address; ?>" class="list-group-item"><?php echo $text_address; ?></a>  <a href="<?php echo $order; ?>" class="list-group-item"><?php echo $text_order; ?></a> <a href="<?php echo $download; ?>" class="list-group-item"><?php echo $text_download; ?></a>    
   <?php if ($logged) { ?>
   <a href="<?php echo $logout; ?>" class="list-group-item"><?php echo $text_logout; ?></a>
   <?php } ?>
