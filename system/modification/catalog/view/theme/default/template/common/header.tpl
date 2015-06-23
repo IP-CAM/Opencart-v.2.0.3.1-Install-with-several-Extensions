@@ -33,7 +33,9 @@
 <link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>" media="<?php echo $style['media']; ?>" />
 <?php } ?>
 <script src="catalog/view/javascript/common.js" type="text/javascript"></script>
+<?php echo $supermenu_settings; ?>
 <?php foreach ($scripts as $script) { ?>
+			
 <script src="<?php echo $script; ?>" type="text/javascript"></script>
 <?php } ?>
 <?php echo $google_analytics; ?>
@@ -85,7 +87,9 @@
     </div>
   </div>
 </header>
+<div class="container"><?php echo $supermenu; ?></div>
 <?php if ($categories) { ?>
+			
 <div class="container">
   <nav id="menu" class="navbar">
     <div class="navbar-header"><span id="category" class="visible-xs"><?php echo $text_category; ?></span>
