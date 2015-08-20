@@ -4,7 +4,7 @@ $_['heading_title']        = 'Beräkna frakt &amp; skatter';
 
 // Text
 $_['text_success']         = 'Klart: Din fraktberäkning har tillämpats!';
-$_['text_shipping']        = 'Skriv in din destination för att få en leverans uppskattning.';
+$_['text_shipping']        = 'Skriv in din destination för att få en leveransuppskattning.';
 $_['text_shipping_method'] = 'Välj önskat leveranssätt för den här beställningen.';
 
 // Entry

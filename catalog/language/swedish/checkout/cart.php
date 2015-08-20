@@ -9,7 +9,7 @@ $_['text_login']             	= 'OBS!: Du måste <a href="%s">logga in</a> eller
 $_['text_items']             	= '%s produkt(er) - %s';
 $_['text_points']            	= 'Bonuspoäng: %s';
 $_['text_next']              	= 'Vad vill du göra nu?';
-$_['text_next_choice']       	= 'Ange rabattkod eller bonuspoäng här nedan. Du kan också se beräknad fraktkostnad för det du har i varukorgen.';
+$_['text_next_choice']       	= '';
 $_['text_empty']             	= 'Din varukorg är tom!';
 $_['text_day']               	= 'dag';
 $_['text_week']              	= 'vecka';
