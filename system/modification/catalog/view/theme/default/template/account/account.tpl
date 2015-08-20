@@ -27,7 +27,7 @@
       <h2><?php echo $text_my_orders; ?></h2>
       <ul class="list-unstyled">
         <li><a href="<?php echo $order; ?>"><?php echo $text_order; ?></a></li>
-        <li><a href="<?php echo $download; ?>"><?php echo $text_download; ?></a></li>
+        
         
         
         
