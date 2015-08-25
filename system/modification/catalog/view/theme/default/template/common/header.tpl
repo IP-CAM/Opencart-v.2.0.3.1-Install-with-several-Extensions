@@ -6,6 +6,11 @@
 <html dir="<?php echo $direction; ?>" lang="<?php echo $lang; ?>">
 <!--<![endif]-->
 <head>
+
+            <?php if(!empty($google_site_verification_code)){ ?>
+			<meta name="google-site-verification" content="<?=$google_site_verification_code?>" />
+            <?php } ?>
+			
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?php echo $title; ?></title>

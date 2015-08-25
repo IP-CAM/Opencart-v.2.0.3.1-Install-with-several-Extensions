@@ -1,6 +1,9 @@
 <?php
 class ControllerCommonHeader extends Controller {
 	public function index() {
+
+			$data['google_site_verification_code'] = $this->config->get('seo_pp_webmaster_tools');
+			
 		$data['title'] = $this->document->getTitle();
 
 		if ($this->request->server['HTTPS']) {

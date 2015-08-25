@@ -111,6 +111,7 @@
       <li><a href="<?php echo $contact; ?>"><?php echo $text_contact; ?></a></li>
     </ul>
   </li>
+<li><a href="<?=$seo_power_pack_url?>"><i class="fa fa-line-chart fa-fw"></i> <span><?php echo $text_seo_power_pack; ?></span></a></li>
   <li id="system"><a class="parent"><i class="fa fa-cog fa-fw"></i> <span><?php echo $text_system; ?></span></a>
     <ul>
       <li><a href="<?php echo $setting; ?>"><?php echo $text_setting; ?></a></li>

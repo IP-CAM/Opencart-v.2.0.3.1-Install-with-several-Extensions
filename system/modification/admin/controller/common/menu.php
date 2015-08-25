@@ -78,6 +78,10 @@ class ControllerCommonMenu extends Controller {
 		$data['text_shipping'] = $this->language->get('text_shipping');
 		$data['text_setting'] = $this->language->get('text_setting');
 		$data['text_stock_status'] = $this->language->get('text_stock_status');
+
+			$data['text_seo_power_pack'] = $this->language->get('text_seo_power_pack');
+			$data['seo_power_pack_url']  = $this->url->link('seo_power_pack/settings', 'token=' . $this->session->data['token'], 'SSL');
+			
 		$data['text_system'] = $this->language->get('text_system');
 		$data['text_tax'] = $this->language->get('text_tax');
 		$data['text_tax_class'] = $this->language->get('text_tax_class');
