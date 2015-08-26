@@ -1,7 +1,7 @@
 <?php
 
 // Title
-$_['text_title'] 		= 'Faktura (%s)';
+$_['text_title'] 		= 'Faktura (+%s)';
 
 // Text
 $_['text_description'] 	= 'Du kommer få en faktura via e-post kort efter att din order har bekräftats.';

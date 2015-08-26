@@ -1,7 +1,7 @@
 <?php
 
 // Title
-$_['text_title'] 		= 'Invoice (%s)';
+$_['text_title'] 		= 'Invoice (+%s)';
 
 // Text
 $_['text_description'] 	= 'You will receive any invoice by e-mail shortly after your order is confirmed.';
