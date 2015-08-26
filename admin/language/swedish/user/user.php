@@ -15,7 +15,7 @@ $_['column_date_added'] = 'Skapad datum';
 $_['column_action']     = 'Åtgärd';
 
 // Entry
-$_['entry_username']   = 'Andvändarnamn';
+$_['entry_username']   = 'Användarnamn';
 $_['entry_user_group'] 	= 'Användargrupp';
 $_['entry_password']   = 'Lösenord';
 $_['entry_confirm']    = 'Bekräfta lösenord';
