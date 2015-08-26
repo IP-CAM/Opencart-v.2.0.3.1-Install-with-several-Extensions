@@ -1,3 +1,3 @@
 <?php
 // Text
-$_['text_title'] = 'Postförskott';
+$_['text_title'] = 'Efterkrav';
