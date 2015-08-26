@@ -1,4 +1,4 @@
 <?php
 // Text
 $_['text_title']  = 'Viktbaserad frakt';
-$_['text_weight'] = 'Vikt:'; 
+$_['text_weight'] = 'vikt:'; 

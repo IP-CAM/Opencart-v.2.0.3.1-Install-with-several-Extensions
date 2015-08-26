@@ -1,6 +1,6 @@
 <?php
 
 // Text
-$_['text_title'] 		= 'Postförskott (+%s)';
+$_['text_title'] 		= 'PostNord Postförskott (+%s)';
 
 ?>
