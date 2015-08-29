@@ -305,6 +305,10 @@ $data['seo_pp_auto_category_seo_url'] = intval($this->config->get('seo_pp_auto_c
 		$data['entry_image'] = $this->language->get('entry_image');
 		$data['entry_top'] = $this->language->get('entry_top');
 		$data['entry_column'] = $this->language->get('entry_column');
+
+$data['entry_products_order'] = $this->language->get('entry_products_order');
+$data['help_products_order'] = $this->language->get('help_products_order');
+	
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_layout'] = $this->language->get('entry_layout');
@@ -498,6 +502,64 @@ if(isset($this->request->get['category_id'])){
 			$data['column'] = 1;
 		}
 
+
+		if (isset($this->request->post['products_order'])) {
+			$data['products_order'] = $this->request->post['products_order'];
+		} elseif (!empty($category_info)) {
+			$data['products_order'] = ($category_info['products_order'] ? $category_info['products_order'] : $this->config->get('config_default_sort'));
+		} else {
+			$data['products_order'] = $this->config->get('config_default_sort');
+		}
+
+		$data['sorts'] = array();
+		
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_default'),
+			'value' => 'p.sort_order-ASC'
+		);
+		
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_name_asc'),
+			'value' => 'pd.name-ASC'
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_name_desc'),
+			'value' => 'pd.name-DESC'
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_price_asc'),
+			'value' => 'p.price-ASC'
+		); 
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_price_desc'),
+			'value' => 'p.price-DESC'
+		); 
+			
+		if ($this->config->get('config_review_status')) {
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_rating_desc'),
+				'value' => 'rating-DESC'
+			); 
+				
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_rating_asc'),
+				'value' => 'rating-ASC'
+			);
+		}
+			
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_model_asc'),
+			'value' => 'p.model-ASC'
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_model_desc'),
+			'value' => 'p.model-DESC'
+		);
+	
 		if (isset($this->request->post['sort_order'])) {
 			$data['sort_order'] = $this->request->post['sort_order'];
 		} elseif (!empty($category_info)) {

@@ -234,6 +234,22 @@
                   <input type="text" name="column" value="<?php echo $column; ?>" placeholder="<?php echo $entry_column; ?>" id="input-column" class="form-control" />
                 </div>
               </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-products-order"><span data-toggle="tooltip" title="<?php echo $help_products_order; ?>"><?php echo $entry_products_order; ?></span></label>
+                  <div class="col-sm-10">
+                    <select name="products_order" id="input-products-order" class="form-control">
+                      <?php foreach ($sorts as $sort) { ?>
+                      <?php if ($sort['value'] == $products_order) { ?>
+                      <option value="<?php echo $sort['value']; ?>" selected="selected"><?php echo $sort['text']; ?></option>
+                      <?php } else { ?>
+                      <option value="<?php echo $sort['value']; ?>"><?php echo $sort['text']; ?></option>
+                      <?php } ?>
+                      <?php } ?>
+                    </select>
+                  </div>
+                </div>
+	
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-sort-order"><?php echo $entry_sort_order; ?></label>
                 <div class="col-sm-10">
