@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Adds filters for common admin pages</id>
+	<version>1.1</version>
+	<vqmver required="false">2.4.0</vqmver>
+	<author>MinoS</author>
+	
+	<!-- _______________________________________________________INFOPAGES FILTER____________________________________________________________________ -->
+	
+	<file path="admin/view/template/catalog/" name="information_list.tpl">
+		<operation error="skip">
+			<search position="after"><![CDATA[<thead>]]></search>
+			<add>
+			<![CDATA[
+			  <tr>
+			    <td colspan="4">
+			    <script type="text/javascript">
+			      $(document).keypress(function(e) {
+				if(e.which == 13 && $('#infoFilter').is(":focus")) {
+				   filterIt(); return false;
+				}
+			      });
+			      function filterIt() {
+			      window.location.href = "<?php echo HTTP_SERVER.'index.php?route=catalog/information&token='.$this->registry->get('session')->data['token'].'&filter_name='; ?>" + $('#infoFilter').val();
+			      return false;
+			      }
+			    </script>
+			    <input id="infoFilter" type="text" name="infoFilter" type="text" value="<?php echo (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : ''; ?>"/>
+			    <a onclick="filterIt();" class="btn btn-primary button">Filter</a>
+			    <a href="<?php echo HTTP_SERVER.'index.php?route=catalog/information&token='.$this->registry->get('session')->data['token']; ?>" class="btn btn-danger button">Clear</a>
+			    </td>
+			  </tr>
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/controller/catalog/" name="information.php">
+	  
+		<operation error="skip">
+			<search position="before"><![CDATA['start' => ($page - 1) * $this->config->get('config_limit_admin'),]]></search>
+			<add>
+			<![CDATA[
+			  'filter_name' => (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : '' ,
+			]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="after"><![CDATA[$url = '';]]></search>
+			<add>
+			<![CDATA[
+			  if (isset($this->registry->get('request')->get['filter_name']) && isset($url)) {
+				  $url .= '&filter_name=' . $this->registry->get('request')->get['filter_name'];
+			  }
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/model/catalog/" name="information.php">
+		<operation error="skip">
+			<search position="before"><![CDATA[$sort_data = array(]]></search>
+			<add>
+			<![CDATA[
+			if (isset($data['filter_name'])) {
+			    $sql .= " AND UPPER(id.title) LIKE UPPER('%" . strtoupper($this->db->escape($data['filter_name'])) . "%') ";]]>
+			}
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="replace"><![CDATA[$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "information");]]></search>
+			<add>
+			<![CDATA[
+			  if (!empty($this->request->get['filter_name'])) {
+			    $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "information i , " . DB_PREFIX . "information_description id WHERE UPPER(id.title) LIKE UPPER('%" . $this->db->escape(strtoupper($this->request->get['filter_name'])) . "%') AND id.information_id = i.information_id";
+			  } else {
+			    $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "information";
+			  }
+			  $query = $this->db->query($sql);
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<!-- _______________________________________________________MANUFACTURERS FILTER____________________________________________________________________ -->
+	
+	<file path="admin/view/template/catalog/" name="manufacturer_list.tpl">
+		<operation error="skip">
+			<search position="after"><![CDATA[<thead>]]></search>
+			<add>
+			<![CDATA[
+			  <tr>
+			    <td colspan="4">
+			    <script type="text/javascript">
+			      $(document).keypress(function(e) {
+				if(e.which == 13 && $('#manFilter').is(":focus")) {
+				   filterIt(); return false;
+				}
+			      });
+			      function filterIt() {
+			      window.location.href = "<?php echo HTTP_SERVER.'index.php?route=catalog/manufacturer&token='.$this->registry->get('session')->data['token'].'&filter_name='; ?>" + $('#manFilter').val();
+			      return false;
+			      }
+			    </script>
+			    <input id="manFilter" name="manFilter" type="text" value="<?php echo (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : ''; ?>"/>
+			    <a onclick="filterIt();" class="btn btn-primary button">Filter</a>
+			    <a href="<?php echo HTTP_SERVER.'index.php?route=catalog/manufacturer&token='.$this->registry->get('session')->data['token']; ?>" class="btn btn-danger button">Clear</a>
+			    </td>
+			  </tr>
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/controller/catalog/" name="manufacturer.php">
+	  
+		<operation error="skip">
+			<search position="before"><![CDATA['start' => ($page - 1) * $this->config->get('config_limit_admin'),]]></search>
+			<add>
+			<![CDATA[
+			  'filter_name' => (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : '' ,
+			]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="after"><![CDATA[$url = '';]]></search>
+			<add>
+			<![CDATA[
+			  if (isset($this->registry->get('request')->get['filter_name']) && isset($url)) {
+				  $url .= '&filter_name=' . $this->registry->get('request')->get['filter_name'];
+			  }
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/model/catalog/" name="manufacturer.php">
+		
+		<operation error="skip">
+		      <ignoreif><![CDATA[if (!empty($data['filter_name'])) {]]></ignoreif>
+			<search position="after"><![CDATA[$sql = "SELECT * FROM " . DB_PREFIX . "manufacturer";]]></search>
+			<add>
+			<![CDATA[
+			if (isset($data['filter_name'])) {
+				$sql .= " WHERE UPPER(name) LIKE UPPER('%" . strtoupper($this->db->escape($data['filter_name'])) . "%') ";
+			}
+			]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="replace"><![CDATA[$sql .= " WHERE name LIKE '" . $this->db->escape($data['filter_name']) . "%'";]]></search>
+			<add>
+			<![CDATA[
+			$sql .= " WHERE UPPER(name) LIKE UPPER('%" . strtoupper($this->db->escape($data['filter_name'])) . "%') ";
+			]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="replace"><![CDATA[$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "manufacturer");]]></search>
+			<add>
+			<![CDATA[
+			  if (!empty($this->request->get['filter_name'])) {
+			    $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "manufacturer WHERE UPPER(name) LIKE UPPER('%" . strtoupper($this->db->escape($this->request->get['filter_name'])) . "%')");
+			  } else {
+			    $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "manufacturer");
+			  }
+			  
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<!-- _______________________________________________________PRODUCTS BY CATEGORY FILTER____________________________________________________________________ -->
+	
+	<file path="admin/view/template/catalog/" name="product_list.tpl">
+	  
+		<operation error="skip">
+			<search offset="1" position="before"><![CDATA[<button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>]]></search>
+			<add>
+			<![CDATA[
+		<label style="margin-top: 14px;" class="control-label" for="input-category"><?php echo $category_filter; ?></label>
+                <input type="text" name="filter_category" value="<?php echo $filter_category; ?>" placeholder="<?php echo $category_filter; ?>" id="input-category" class="form-control" />]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[<td class="text-left"><?php if ($sort == 'p.price') { ?>]]></search>
+			<add>
+			<![CDATA[<td class="text-left"><?php echo $category_filter; ?></td>]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[<td class="text-left"><?php echo $product['model']; ?></td>]]></search>
+			<add>
+			<![CDATA[<td class="text-left"><?php echo $product['category']; ?></td>]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[var filter_quantity = $('input[name=\'filter_quantity\']').val();]]></search>
+			<add>
+			<![CDATA[
+	var filter_category = $('input[name=\'filter_category\']').val();
+	
+	if (filter_category) {
+		url += '&filter_category=' + encodeURIComponent(filter_category);
+	}		]]>
+			</add>
+		</operation>
+	</file>
+	
+	
+	
+	<file path="admin/language/*/catalog/" name="product.php">
+		<operation error="skip">
+			<search position="before"><![CDATA[// Entry]]></search>
+			<add>
+			<![CDATA[$_['category_filter']          = 'Category';]]>
+			</add>
+		</operation>
+	</file>
+	
+	
+	<file path="admin/controller/catalog/" name="product.php">
+		<operation error="skip">
+			<search position="before"><![CDATA[$data['column_quantity'] = $this->language->get('column_quantity');]]></search>
+			<add>
+			<![CDATA[$data['category_filter'] = $this->language->get('category_filter');]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before" index="5"><![CDATA[if (isset($this->request->get['filter_quantity'])) {]]></search>
+			<add>
+			<![CDATA[
+		if (isset($this->request->get['filter_category'])) {
+			$filter_category = $this->request->get['filter_category'];
+		} else {
+			$filter_category = null;
+		}]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before" index="1,2,3,4,6,7,8,9"><![CDATA[if (isset($this->request->get['filter_quantity'])) {]]></search>
+			<add>
+			<![CDATA[
+		if (isset($this->request->get['filter_category'])) {
+			$url .= '&filter_category=' . $this->request->get['filter_category'];
+		}]]>
+			</add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[$data['filter_quantity'] = $filter_quantity;]]></search>
+			<add>
+			<![CDATA[$data['filter_category'] = $filter_category;]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before"><![CDATA['filter_quantity' => $filter_quantity,]]></search>
+			<add>
+			<![CDATA['filter_category' => $filter_category,]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before"><![CDATA['special'    => $special,]]></search>
+			<add>
+			<![CDATA['category'   => (isset($result['cname'])) ? $result['cname'] : '' ,]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/model/catalog/" name="product.php">
+		<operation error="skip">
+			<search position="replace"><![CDATA[$sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";]]></search>
+			<add>
+			<![CDATA[
+		if ( !empty($data['filter_category'])) {
+		    $sql = "SELECT p.* , pd.*, cd.name as cname FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id) LEFT JOIN " . DB_PREFIX . "category_description cd ON (cd.category_id = p2c.category_id)  WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		} else {
+		    $sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		}	]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before"><![CDATA[$sql .= " WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";]]></search>
+			<add>
+			<![CDATA[
+		if ( !empty($data['filter_category'])) {
+			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id)";			
+			$sql .= " LEFT JOIN " . DB_PREFIX . "category_description cd ON (cd.category_id = p2c.category_id)";			
+		}	]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before"><![CDATA[if (isset($data['filter_quantity']) && $data['filter_quantity'] !== null) {]]></search>
+			<add>
+			<![CDATA[
+		if (!empty($data['filter_category'])) {
+			$this->load->model('catalog/category');
+			$children = $this->model_catalog_category->getCategoryChildrenByName($this->request->get['filter_category']);
+			$sql .= " AND p2c.category_id IN ('" . implode("','",$children) . "') ";
+		}	]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="before"><![CDATA[if (isset($data['filter_quantity']) && !is_null($data['filter_quantity'])) {]]></search>
+			<add>
+			<![CDATA[
+		if (!empty($data['filter_category'])) {
+			$this->load->model('catalog/category');
+			$children = $this->model_catalog_category->getCategoryChildrenByName($this->request->get['filter_category']);
+			$sql .= " AND p2c.category_id IN ('" . implode("','",$children) . "') ";
+		}	]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/model/catalog/" name="category.php">
+		<operation error="skip">
+			<search position="before"><![CDATA[public function getCategoryLayouts($category_id) {]]></search>
+			<add>
+			<![CDATA[
+	public function getCategoryChildrenByName ($filter_category) {
+	    $children = array();
+	    
+	    $sql = "SELECT cd.*, cp.category_id as children FROM " . DB_PREFIX . "category_description cd LEFT JOIN " . DB_PREFIX . "category c ON (c.category_id = cd.category_id) LEFT JOIN " . DB_PREFIX . "category_path cp ON (cp.path_id = cd.category_id )  WHERE cd.name LIKE '%".$this->db->escape($filter_category)."%' ";
+	    $query = $this->db->query($sql);
+	    foreach ($query->rows as $row) {
+		$children[] = $row['children'];
+	    }
+	    
+	    return $children;
+	}]]>
+			</add>
+		</operation>
+	</file>
+	
+	<!-- _______________________________________________________CATEGORY FILTER____________________________________________________________________ -->
+	
+	<file path="admin/view/template/catalog/" name="category_list.tpl">
+		<operation error="skip" info="opencart2b">
+			<search position="after"><![CDATA[<thead>]]></search>
+			<add>
+			<![CDATA[
+			  <tr>
+			    <td colspan="4">
+			    <script type="text/javascript">
+			      $(document).keypress(function(e) {
+				if(e.which == 13 && $('#catFilter').is(":focus")) {
+				   filterIt(); return false;
+				}
+			      });
+			      function filterIt() {
+			      window.location.href = "<?php echo HTTP_SERVER.'index.php?route=catalog/category&token='.$this->registry->get('session')->data['token'].'&filter_name='; ?>" + $('#catFilter').val();
+			      return false;
+			      }
+			    </script>
+			    <input id="catFilter" name="catFilter" type="text" value="<?php echo (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : ''; ?>"/>
+			    <a onclick="filterIt();" class="btn btn-primary button">Filter</a>
+			    <a href="<?php echo HTTP_SERVER.'index.php?route=catalog/category&token='.$this->registry->get('session')->data['token']; ?>" class="btn btn-danger button">Clear</a>
+			    </td>
+			  </tr>
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file path="admin/controller/catalog/" name="category.php">
+		<operation error="skip" info="opencart2b">
+			<search position="before"><![CDATA['start' => ($page - 1) * $this->config->get('config_limit_admin'),]]></search>
+			<add>
+			<![CDATA[
+			  'filter_name' => (isset($this->registry->get('request')->get['filter_name'])) ? $this->registry->get('request')->get['filter_name'] : '' ,
+			]]>
+			</add>
+		</operation>
+		<operation error="skip" info="opencart2b">
+			<search position="after" index="1,2,3,4,6,7"><![CDATA[$url = '';]]></search>
+			<add>
+			<![CDATA[
+			  if (isset($this->registry->get('request')->get['filter_name']) && isset($url)) {
+				  $url .= '&filter_name=' . $this->registry->get('request')->get['filter_name'];
+			  }
+			]]>
+			</add>
+		</operation>
+		
+	</file>
+	
+	<file path="admin/model/catalog/" name="category.php">
+		<operation error="skip">
+			<search position="replace"><![CDATA[$sql .= " AND cd2.name LIKE '" . $this->db->escape($data['filter_name']) . "%'";]]></search>
+			<add>
+			<![CDATA[$sql .= " AND UPPER(cd2.name) LIKE UPPER('%" . strtoupper($this->db->escape($data['filter_name'])) . "%') ";]]>
+			</add>
+		</operation>
+		<operation error="skip">
+			<search position="replace"><![CDATA[$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "category");]]></search>
+			<add>
+			<![CDATA[
+			  if (!empty($this->registry->get('request')->get['filter_name'])) {
+			    $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "category c , " . DB_PREFIX . "category_description cd WHERE UPPER(cd.name) LIKE UPPER('%" . $this->db->escape(strtoupper($this->registry->get('request')->get['filter_name'])) . "%') AND cd.category_id = c.category_id";
+			  } else {
+			    $sql = "SELECT COUNT(*) AS total FROM " . DB_PREFIX . "category c ";
+			  }
+			  $query = $this->db->query($sql);
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+</modification>
