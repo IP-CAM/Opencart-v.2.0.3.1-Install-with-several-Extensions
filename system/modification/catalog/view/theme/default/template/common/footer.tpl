@@ -50,4 +50,11 @@
 
 
 
+
+<?php if( $maintenance ) { ?>
+<style type="text/css">
+body { background-image:url(catalog/view/theme/default/image/maintenance.png); background-position:center; background-repeat:no-repeat; background-size:100%; background-attachment:fixed; }
+</style>				
+<?php } ?>
+			
 </body></html>
