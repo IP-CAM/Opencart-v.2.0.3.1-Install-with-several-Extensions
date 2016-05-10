@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+        <id>DIBS make splitted checkout card/invoice</id>
+        <version>1.0.0</version>
+        <vqmver required="true">2.4.1</vqmver>
+        <author>dibs</author>
+         <file path="catalog/view/theme/default/template/checkout/" name="register.tpl,guest.tpl">
+                <operation error="log">
+                <search position="after" offset="5">
+                  <![CDATA[<input type="radio" name="customer_group_id" value="<?php echo $customer_group['customer_group_id']; ?>" />]]>
+                </search>
+                <add>
+                   <![CDATA[<div class="form-group">
+        			  <label class="control-label" for="input-payment-ssn"><?php echo $entry_ssn; ?></label>
+        			  <input type="text" name="ssn" id="input-payment-firstname" class="form-control" />
+      				  </div>
+   					]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/view/theme/default/template/account/edit.tpl">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[<legend><?php echo $text_your_details; ?></legend>]]>
+                </search>
+                <add>
+                   <![CDATA[<div class="form-group">
+            				<label class="col-sm-2 control-label" for="input-ssn"><?php echo $entry_ssn; ?></label>
+            					<div class="col-sm-10">
+              					<input type="text" name="ssn" value="<?php echo $ssn; ?>" id="input-ssn" class="form-control" />
+            					</div>
+          					</div>
+          			]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/view/theme/default/template/checkout/payment_method.tpl">
+                <operation error="log">
+                <search position="after" offset="3">
+                        <![CDATA[(<?php echo $payment_method['terms']; ?>)]]>
+                </search>
+                <add>
+	              <![CDATA[<?php if($payment_method['code'] == 'dibspw') { ?>
+				    <?php if( ($_SESSION['currency'] != 'SEK' && $_SESSION['currency'] != 'NOK')) {
+				                $dibspw_invoice_payment_enabled = 'NO';
+				          }
+				    ?>
+			       <div id="dibs-paytypes">
+				         <?php if( $dibspw_card_payment_enabled == 'YES' ) { ?>
+				       <div class="dibs-paytype">
+				         <?php if($dibspw_invoice_payment_enabled == 'YES') { ?> <input type="radio" id="dibs_card_radio" name="paytype" value="card" checked><?php } ?> &nbsp;<b> <?php echo $dibspw_card_title; if(!$dibspw_card_title) echo 'Cards'; ?> </b>
+				         <?php if($dibspw_invoice_payment_enabled == 'NO')  { ?> <input type="radio" name="paytype" value="card" checked="checked" style="display:none;" />  <?php } ?>
+				         <div class="dibs_brand_assets" style="margin: 0px;">
+				             <img src="https://cdn.dibspayment.com/logo/checkout/combo/horiz/DIBS_checkout_kombo_horizontal_04.png" alt="DIBS - Payments made easy" width="180"/>
+				         </div>
+				        </div>
+				        <?php if($entry_card_description) { ?>
+				                <div class="dibs-terms-description">
+				                    <?php echo nl2br($entry_card_description); ?>
+				                </div>
+				            <?php } ?>
+				     <?php } ?>
+				    <?php if( $dibspw_invoice_payment_enabled == 'YES' && ($_SESSION['currency'] == 'SEK' || $_SESSION['currency'] == 'NOK')) { ?>
+				    <div class="dibs-paytype">
+				        <?php if($dibspw_card_payment_enabled == 'YES') { ?><input type="radio" id="dibs_invoice_radio" name="paytype" <?php if($dibspw_card_payment_enabled == 'NO')echo 'checked'; ?>  value="invoice" > <?php } ?>&nbsp; <b> <?php echo $dibspw_invoice_title; if(!$dibspw_invoice_title) echo 'Invoice'; ?> </b>
+				        <?php if($dibspw_card_payment_enabled== 'NO') { ?> <input type="radio" name="paytype" value="invoice" style="display:none;" checked="checked" />  <?php } ?>
+				       <?php echo $dibspw_invoice_fee_str; ?>
+				         <div class="dibs_brand_assets" style="margin: 0px;">
+				            <img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="125"/>
+				        </div>
+				    </div>
+    
+				    <?php if($entry_invoice_description) { ?>
+				        <div class="dibs-terms-description">
+				            <?php echo nl2br($entry_invoice_description); ?>
+				        </div>
+				    <?php }?>
+				   
+				    <?php if($dibspw_invoice_terms_lang == 'NO') { ?>
+				        <div class="dibs_brand_assets" style="margin: 0px;">
+				            <a href="#" onClick="return dibsTermsCDN.toggle(this);">Vilkår - Faktura</a>
+				            <div id="dibs-checkout-single-no-10" class="dibs_brand_assets__terms" style="display: none"></div>
+				            <script src="https://cdn.dibspayment.com/js/dibs_jsonp_v3.min.js" data-dibs-terms-filename="terms/invoice/no/invoice_no.js" data-terms-container-id="dibs-checkout-single-no-10"></script>
+				        </div>
+				
+				    <?php } ?>
+				    <?php if($dibspw_invoice_terms_lang == 'SE') { ?>
+				        <div class="dibs_brand_assets" style="margin: 0px;">
+				            <a href="#" onClick="return dibsTermsCDN.toggle(this);">Villkor - Faktura</a>
+				            <div id="dibs-checkout-single-se-10" class="dibs_brand_assets__terms" style="display: none"></div>
+				            <script src="https://cdn.dibspayment.com/js/dibs_jsonp_v3.min.js" data-dibs-terms-filename="terms/invoice/se/person/invoice_se1.js" data-terms-container-id="dibs-checkout-single-se-10"></script>
+				        </div>
+				    <?php } ?>
+				  <?php } ?>
+				    </div>
+					<?php } ?>]]>
+                </add>
+                </operation>
+             
+                <operation error="log">
+                	<search position="bottom">
+                	</search>
+           		    <add>
+              		 <![CDATA[<style>
+						.dibs-terms-description {
+    					margin-top: 20px;
+    					background-color: #F5F5F5;
+    					padding: 20px;
+						}
+						.dibs-paytype .dibs_brand_assets {
+   							float: right;        
+						}
+						.dibs-paytype {
+    						margin-top: 20px;
+    						margin-bottom: 20px;
+     					}
+					     #dibs-paytypes {
+					         margin-left: 25px;
+					     }
+					</style>]]>
+                	</add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/model/account/customer.php">
+                <operation error="log">
+                <search position="replace">
+                        <![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$customer_group_id . "', store_id = '" . (int)$this->config->get('config_store_id') . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? serialize($data['custom_field']['account']) : '') . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW()");]]>
+                </search>
+                <add>
+                        <![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$customer_group_id . "', store_id = '" . (int)$this->config->get('config_store_id') . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']['account']) ? serialize($data['custom_field']['account']) : '') . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW(), ssn = '" . $data['ssn'] . "'");]]>
+                </add>
+                </operation>
+                
+                <operation error="log">
+                <search position="replace">
+                        <![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? serialize($data['custom_field']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");]]>
+                </search>
+                <add>
+                        <![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "' ,ssn = '". $data['ssn'] ."',  custom_field = '" . $this->db->escape(isset($data['custom_field']) ? serialize($data['custom_field']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/language/english/account/edit.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$_['entry_fax']          = 'Fax';]]>
+                </search>
+                <add>
+                        <![CDATA[$_['entry_ssn']          = 'ssn';]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/controller/account/edit.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$data['button_upload'] = $this->language->get('button_upload');]]>
+                </search>
+                <add>
+                      <![CDATA[$data['entry_ssn'] = $this->language->get('entry_ssn');
+				        if( isset($_SESSION['currency'])) {
+            	 			if($_SESSION['currency'] == 'SEK') {
+                	 			$data['entry_ssn'] = 'Personnummer'; 
+             				}
+             				if($_SESSION['currency'] == 'NOK') {
+                 				$data['entry_ssn'] = 'F�dselsnummer';
+             				}
+        				}  		
+    				]]>
+                </add>
+                </operation>
+                
+                <operation error="log">
+                <search position="after" offset="1">
+                        <![CDATA[$data['fax'] = '';]]>
+                </search>
+                <add>
+                        <![CDATA[if (isset($this->request->post['ssn'])) {
+								$data['ssn'] = $this->request->post['ssn'];
+								} elseif (isset($customer_info)) {
+								$data['ssn'] = $customer_info['ssn'];
+								} else {
+								$data['ssn'] = '';
+								}]]>
+                </add>
+                </operation>
+                
+        </file>
+       
+        <file  name="catalog/controller/checkout/register.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[	$data['button_upload'] = $this->language->get('button_upload');]]>
+                </search>
+                <add>
+                        <![CDATA[$data['entry_ssn'] = $this->language->get('entry_ssn');
+        						if( isset($_SESSION['currency'])) {
+                    			if($_SESSION['currency'] == 'SEK') {
+                        			$data['entry_ssn'] = 'Personnummer'; 
+                				}
+               				if($_SESSION['currency'] == 'NOK') {	
+                      			$data['entry_ssn'] = 'F�dselsnummer';
+                  			}
+                		}  
+						]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/language/english/checkout/checkout.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$_['entry_shipping'] 	             = 'My delivery and billing addresses are the same.';]]>
+                </search>
+                <add>
+                        <![CDATA[$_['entry_ssn']                      = 'SSN:';]]>
+                </add>
+                </operation>
+        </file>
+        
+        <file  name="catalog/controller/checkout/payment_method.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$data['button_continue'] = $this->language->get('button_continue');]]>
+                </search>
+                <add>
+                    <![CDATA[$data['entry_card_description']          = $this->config->get('dibspw_card_description');
+                	$data['entry_invoice_description']       = $this->config->get('dibspw_invoice_description');
+                	$data['dibspw_card_title']               = $this->config->get('dibspw_card_title');
+                	$data['dibspw_invoice_title']            = $this->config->get('dibspw_invoice_title');
+                	$data['dibspw_invoice_terms_lang']       = $this->config->get('dibspw_invoice_terms_lang');
+                	$data['dibspw_card_payment_enabled']     = $this->config->get('dibspw_card_payment_enabled'); 
+                	$data['dibspw_invoice_payment_enabled']  = $this->config->get('dibspw_invoice_payment_enabled'); 
+                	$data['dibspw_card_paytype']             = $this->config->get('dibspw_card_paytype');
+                	$data['dibspw_invoice_paytype']          = $this->config->get('dibspw_invoice_paytype');
+	                $data['dibspw_invoice_fee_str']    = '';
+    	            $data['dibspw_invoice_fee_amount'] = 0;
+        	        if($this->config->get('dibspw_invoice_fee')) {
+            	       $invoiceFeeAmount = $this->currency->format($this->config->get('dibspw_invoice_fee'), $_SESSION['currency'], 1, false);
+               	     $data['dibspw_invoice_fee_str'] = '<b>- ' . 
+               	     $invoiceFeeAmount  . 
+                	    ' ' .$_SESSION['currency']. '</b>';
+                   	 $data['dibspw_invoice_fee_amount'] = $this->config->get('dibspw_invoice_fee');
+                	}
+				]]>
+                </add>
+                </operation>
+                
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];]]>
+                </search>
+                <add>
+                        <![CDATA[if( $this->session->data['payment_method']['code'] == 'dibspw' && isset($_POST['paytype'])) {
+                                 $this->session->data['payment_method']['dibspw_paytype'] = $_POST['paytype'];}]]>
+                </add>
+                </operation>
+                	
+        </file>
+        <file  name="catalog/controller/checkout/guest.php">
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$data['entry_shipping'] = $this->language->get('entry_shipping');]]>
+                </search>
+                <add>
+                        <![CDATA[$data['entry_ssn'] = $this->language->get('entry_ssn');
+        					if( isset($_SESSION['currency'])) {
+        	     				if($_SESSION['currency'] == 'SEK') {
+                	 				$data['entry_ssn'] = 'Personnummer'; 
+             	     			}
+             	  				if($_SESSION['currency'] == 'NOK') {
+                 					$data['entry_ssn'] = 'F�dselsnummer';
+             	     			}	
+        					}  
+						]]>
+                </add>
+                </operation>
+                
+                <operation error="log">
+                <search position="after" offset="1">
+                        <![CDATA[$data['email'] = '';]]>
+                </search>
+                <add>   <![CDATA[if(isset($this->session->data['guest']['ssn'])) {
+								$data['ssn'] = $this->session->data['guest']['ssn'];
+								} else {
+        						$data['ssn'] = '';
+							}
+        				]]>
+                </add>
+                </operation>
+                
+                <operation error="log">
+                <search position="after">
+                        <![CDATA[$this->session->data['guest']['fax'] = $this->request->post['fax'];]]>
+                </search>
+                <add>
+                        <![CDATA[$this->session->data['guest']['ssn'] = $this->request->post['ssn'];]]>
+                </add>
+                </operation>
+    
+        </file>
+</modification>

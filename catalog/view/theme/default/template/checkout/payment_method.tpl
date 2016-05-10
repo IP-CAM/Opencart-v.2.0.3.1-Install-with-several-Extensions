@@ -16,6 +16,9 @@
     <?php if ($payment_method['terms']) { ?>
     (<?php echo $payment_method['terms']; ?>)
     <?php } ?>
+    <?php if ( isset($payment_method['logo']) && $payment_method['logo'] ) { ?>
+    <?php    echo $payment_method['logo']; ?>
+    <?php } ?>
   </label>
 </div>
 <?php } ?>
