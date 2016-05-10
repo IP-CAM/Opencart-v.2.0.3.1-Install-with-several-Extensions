@@ -1,6 +1,7 @@
 <?php
 // Text
 $_['text_affiliate']                   = 'Affiliates';
+$_['text_seo_power_pack']                         = 'SEO Power Pack';
 $_['text_api']                         = 'API';
 $_['text_attribute']                   = 'Attribut';
 $_['text_attribute_group']             = 'Attributgrupper';
