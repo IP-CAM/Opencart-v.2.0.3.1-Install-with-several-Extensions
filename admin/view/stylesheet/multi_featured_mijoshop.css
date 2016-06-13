@@ -1,0 +1,26 @@
+/**
+ * Multiple Featured Module Pro
+ *
+ * @author  Kyo (AKA Yasuhiro Sota)
+ * @version 3.2.2
+ * @license Commercial License
+ * @package admin
+ * @subpackage  admin.view.stylesheet
+*/
+
+/* Table of Content
+==================================================
+  #MijoShop
+
+/* #MijoShop
+================================================== */
+#MultiFeatured .input-title-container .input-title {
+  padding-left: 32px !important;
+}
+#MultiFeatured .form-group .checkbox {
+  padding-left: 0 !important;
+}
+#MultiFeatured input[type="checkbox"],
+#MultiFeatured input[type="radio"] {
+  top: -2px !important;
+}
