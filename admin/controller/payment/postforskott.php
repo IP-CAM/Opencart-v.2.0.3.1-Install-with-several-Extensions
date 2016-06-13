@@ -101,9 +101,13 @@ class ControllerPaymentPostforskott extends Controller {
 		$this->load->model('localisation/tax_class');
 		$data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
 
-		// LOAD MODEL AND GET CUSTOMER CLASSES
-		$this->load->model('sale/customer_group');
-		$data['customer_groups'] = $this->model_sale_customer_group->getCustomerGroups();
+		// LOAD CUSTOMER GROUP MODEL
+		if ((float)VERSION>=2.1) 	{ $this->load->model('customer/customer_group'); }
+		else 						{ $this->load->model('sale/customer_group'); }
+
+		// ADD CUSTOMER GROUPS TO DATA
+		if ((float)VERSION>=2.1) 	{ $data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups(); }
+		else 						{ $data['customer_groups'] = $this->model_sale_customer_group->getCustomerGroups(); }
 
 		// ADD FIELDS
 		$fields = array(
