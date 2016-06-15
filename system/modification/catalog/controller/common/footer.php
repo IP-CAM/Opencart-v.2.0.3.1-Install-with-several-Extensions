@@ -1,6 +1,7 @@
 <?php
 class ControllerCommonFooter extends Controller {
 	public function index() {
+ $data['custom_footer'] = $this->config->get('custom_footer'); 
 		$this->load->language('common/footer');
 
 			if ($this->config->get('config_maintenance')) {
