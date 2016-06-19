@@ -1,0 +1,44 @@
+<modification>
+	
+	<id>Restrict Payment Methods</id>
+	<version>220.2</version>
+	<vqmver>2.6.1</vqmver>
+	<author>Clear Thinking</author>
+	<email>johnathan@getclearthinking.com</email>
+	<website>http://www.getclearthinking.com</website>
+	
+	<!-- All OpenCart versions -->
+	<file name="catalog/model/*/extension.php" error="skip">
+		<operation error="skip">
+			<search position="after"><![CDATA[
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "extension WHERE `type` = '" . $this->db->escape($type) . "'");
+			]]></search>
+			<add trim="true"><![CDATA[
+				// Clear Thinking: restrict_payment.xml
+				if ($type == 'payment' && $this->config->get('restrict_payment_status')) {
+					$this->load->model('module/restrict_payment');
+					$query->rows = $this->model_module_restrict_payment->restrict($query->rows);
+				}
+				// end: restrict_payment.xml
+			]]></add>
+		</operation>
+	</file>
+	
+	<!-- One-Page Checkout extension -->
+	<file name="catalog/model/onecheckout/checkout.php" error="skip">
+		<operation error="skip">
+			<search position="before"><![CDATA[
+				return $query->rows;
+			]]></search>
+			<add trim="true"><![CDATA[
+				// Clear Thinking: restrict_payment.xml
+				if ($type == 'payment' && $this->config->get('restrict_payment_status')) {
+					$this->load->model('module/restrict_payment');
+					$query->rows = $this->model_module_restrict_payment->restrict($query->rows);
+				}
+				// end: restrict_payment.xml
+			]]></add>
+		</operation>
+	</file>
+	
+</modification>
