@@ -2,7 +2,7 @@
 
 class ControllerPaymentDibsfw extends Controller {
         const REDIRECT_URL = 'https://payment.architrade.com/paymentweb/start.action';
-        
+
         public function index() {
             $this->language->load('payment/dibsfw');
             $data['button_confirm'] = $this->language->get('button_confirm');
@@ -17,28 +17,28 @@ class ControllerPaymentDibsfw extends Controller {
             /* DIBS integration **/
             $data['hidden'] = $aData;
             $data['action'] = self::REDIRECT_URL;
-            $this->template = (file_exists(DIR_TEMPLATE . 
-                              $this->config->get('config_template') . 
+            $this->template = (file_exists(DIR_TEMPLATE .
+                              $this->config->get('config_template') .
                               '/template/payment/dibsfw.tpl')) ?
-                              $this->config->get('config_template') . 
+                              $this->config->get('config_template') .
                               '/template/payment/dibsfw.tpl' :
                               $this->template = 'default/template/payment/dibsfw.tpl';
-            
-            return $this->load->view('payment/dibsfw.tpl', $data);
+
+            return $this->load->view('default/template/payment/dibsfw.tpl', $data);
     }
-    
+
     public function callback() {
         $this->load->model('checkout/order');
         $this->model_checkout_order->addOrderHistory($this->request->post['opc_order'],
                             $this->config->get('dibsfw_order_status_id'), "Trsnaction id: " . $this->request->post['transact'], true);
     }
-    
+
     public function success() {
          $this->response->redirect($this->url->link('checkout/success'));
     }
-    
+
     public function cancel() {
         $this->response->redirect($this->url->link('checkout/cart'));
     }
-    
+
 }

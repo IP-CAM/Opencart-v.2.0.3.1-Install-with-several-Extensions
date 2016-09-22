@@ -1,15 +1,15 @@
 <?php
 
 class ModelPaymentDibsfw extends Model {
-    
+
     const MODULE_VERSION = 'opc_fw_vqm_3.0.4';
-    
+
     public function getMethod($address, $total) {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . 
-                                  "zone_to_geo_zone WHERE geo_zone_id = '" . 
-                                  (int)$this->config->get('dibsfw_geo_zone_id') . 
-                                  "' AND country_id = '" . (int)$address['country_id'] . 
-                                  "' AND (zone_id = '" . (int)$address['zone_id'] . 
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX .
+                                  "zone_to_geo_zone WHERE geo_zone_id = '" .
+                                  (int)$this->config->get('dibsfw_geo_zone_id') .
+                                  "' AND country_id = '" . (int)$address['country_id'] .
+                                  "' AND (zone_id = '" . (int)$address['zone_id'] .
                                   "' OR zone_id = '0')");
 	if ($this->config->get('dibsfw_total') > $total) {
             $status = false;
@@ -22,8 +22,8 @@ class ModelPaymentDibsfw extends Model {
 	}
         else {
             $status = false;
-	}	
-		
+	}
+
 	$method_data = array();
         $sTitle = "";
 
@@ -32,27 +32,27 @@ class ModelPaymentDibsfw extends Model {
             $sTitle = $sUsersTitle;
         }
         else $sTitle = $this->language->get('text_title');
-        if ($status) {  
-            $method_data = array( 
+        if ($status) {
+            $method_data = array(
                 'code'       => 'dibsfw',
                 'title'      => $sTitle,
                 'sort_order' => $this->config->get('dibsfw_sort_order'),
                 'terms'      => ''
             );
         }
-   
+
         return $method_data;
     }
-    
+
     public function getRequestParams($order) {
         $this->language->load('payment/dibsfw');
         return $this->collectStandartParams($order);
     }
-    
+
     private function collectStandartParams($order) {
         $requestParams = array();
         $requestParams['merchant']           =  $this->config->get('dibsfw_mid');
-        $requestParams['amount']             =  $this->roundAmount($this->currency->format($order['total'], 
+        $requestParams['amount']             =  $this->roundAmount($this->currency->format($order['total'],
                                                 $order['currency_code'], $order['currency_value'], false));
         $orderId = $order['order_id'];
         if( $this->config->get('dibsfw_uniqueoid') == 'yes') {
@@ -61,17 +61,17 @@ class ModelPaymentDibsfw extends Model {
         }
 
         $requestParams['orderid']            =  $orderId;
-        $requestParams['accepturl']          =  $this->config->get('config_url') . 
+        $requestParams['accepturl']          =  $this->config->get('config_url') .
                                                    'payment/dibsfw/success';
-        $requestParams['cancelurl']          =  $this->config->get('config_url') .  
+        $requestParams['cancelurl']          =  $this->config->get('config_url') .
                                                     'payment/dibsfw/cancel';
-        $requestParams['callbackurl']        =  $this->config->get('config_url') .  
+        $requestParams['callbackurl']        =  $this->config->get('config_url') .
                                                     'payment/dibsfw/callback';
-        $requestParams['s_callbackfix']       = $this->config->get('config_url') .  
+        $requestParams['s_callbackfix']       = $this->config->get('config_url') .
                                                     'payment/dibsfw/callback';
-            
+
         $requestParams['opc_order']          =  $order['order_id'];
-        
+
         $requestParams['currency']           =  $order['currency_code'];
         // address
         $requestParams['billingAddress']     =  $order['payment_address_1'];
@@ -80,7 +80,7 @@ class ModelPaymentDibsfw extends Model {
         $requestParams['billingLastName']    =  $order['payment_lastname'];
         $requestParams['billingPostalCode']  =  $order['payment_postcode'];
         $requestParams['billingPostalPlace'] =  $order['payment_city'];
-        
+
         // delivery
         $requestParams['delivery1.Firstname'] =  $order['shipping_firstname'];
         $requestParams['delivery2.Lastname']  =  $order['shipping_lastname'];
@@ -105,11 +105,11 @@ class ModelPaymentDibsfw extends Model {
         if( $this->config->get('dibsfw_paytype')) {
             $requestParams['paytype'] = $this->config->get('dibsfw_paytype');
         }
-        
+
         if($this->config->get('dibsfw_capturenow') == 'yes') {
             $requestParams['capturenow'] = 1;
-        } 
-        
+        }
+
         $requestParams['lang']               =  $this->config->get('dibsfw_lang');
         $requestParams['decorator']          =  $this->config->get('dibsfw_decorator');
         $this->config->get('dibsfw_testmode') == 'yes' ? $requestParams['test'] = 1 : 0;
@@ -156,7 +156,7 @@ class ModelPaymentDibsfw extends Model {
                                 'price' => $oItem->price,
                                 'unitCode' => 'pcs',
                                 'VATAmount' => 0);
-                $occ = $root->appendChild($doc->createElement("orderItem"));            
+                $occ = $root->appendChild($doc->createElement("orderItem"));
                 foreach($aAttrs as $sKey => $sVal) {
                     $occ->appendChild($doc->createAttribute($sKey))
                         ->appendChild($doc->createTextNode($sVal));
@@ -179,7 +179,7 @@ class ModelPaymentDibsfw extends Model {
         $totals = array();
         $taxes = $this->cart->getTaxes();
         $total = 0;
-        // Because __call can not keep var references so we put them into an array.                     
+        // Because __call can not keep var references so we put them into an array.
         $total_data = array(
                 'totals' => &$totals,
                 'taxes'  => &$taxes,
@@ -193,7 +193,7 @@ class ModelPaymentDibsfw extends Model {
         foreach ($results as $result) {
                 if ($this->config->get($result['code'] . '_status')) {
                         $this->load->model('total/' . $result['code']);
-                        $this->{'model_total_' . $result['code']}->getTotal($total_data);
+                        $this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
                 }
         }
         $order_info = $this->model_checkout_order->getOrder((int)$this->session->data['order_id']);
@@ -211,7 +211,7 @@ class ModelPaymentDibsfw extends Model {
         }
         $id = 0;
         foreach($total_data['totals'] as $total) {
-            if( $total['code'] == 'coupon' ||  $total['code'] == 'voucher' || 
+            if( $total['code'] == 'coupon' ||  $total['code'] == 'voucher' ||
                   $total['code'] == 'tax' || $total['code'] == 'shipping') {
                   $aItems[] = (object)array(
                     'id'    => $total['code'].'_'.$id,
@@ -226,11 +226,11 @@ class ModelPaymentDibsfw extends Model {
         }
         return $aItems;
     }
-    
+
     public function roundAmount($fNum, $iPrec = 2) {
         return empty($fNum) ? (int)0 : (int)(string)(round($fNum, $iPrec) * pow(10, $iPrec));
     }
-    
+
     public static function utf8Fix($sText) {
         return (mb_detect_encoding($sText) == "UTF-8" && mb_check_encoding($sText, "UTF-8")) ?
                $sText : utf8_encode($sText);
