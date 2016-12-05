@@ -4,7 +4,7 @@
         <version>1.0.0</version>
         <vqmver>2.4.0</vqmver>
         <author>dibs</author>
-        <file name="catalog/controller/startup/seo_url.php">
+        <file name="catalog/controller/common/seo_url.php">
                 <operation error="skip">
                 	<search position="after" offset="3">
                         <![CDATA[$this->request->get['route'] = 'information/information';]]>
