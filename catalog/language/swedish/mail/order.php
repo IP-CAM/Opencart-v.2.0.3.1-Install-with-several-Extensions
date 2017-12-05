@@ -1,7 +1,7 @@
 <?php
 // Text
 $_['text_new_subject']          = '%s - Order %s';
-$_['text_new_greeting']         = 'Tack för din beställning! Din order kommer att behandlas så snart betalningen har bekräftats.';
+$_['text_new_greeting']         = 'Tack för din beställning! Din order kommer att behandlas så snart som möjligt.';
 $_['text_new_received']         = 'Du har mottagit en order.';
 $_['text_new_link']             = 'För att se din beställning, klicka på länken nedan:';
 $_['text_new_order_detail']     = 'Orderdetaljer';
