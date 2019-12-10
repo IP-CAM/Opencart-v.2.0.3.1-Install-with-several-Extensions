@@ -29,6 +29,7 @@ $_['entry_zone']           = 'Län:';
 $_['entry_newsletter']     = 'Prenumerera:';
 $_['entry_password']       = 'Lösenord:';
 $_['entry_confirm']        = 'Bekräfta lösenord:';
+$_['entry_captcha']        = 'Ange koden i rutan nedan:';
 
 // Error
 $_['error_exists']         = 'Fel: E-postadress är redan registrerad!';
@@ -45,3 +46,4 @@ $_['error_custom_field']   = '%s krävs!';
 $_['error_password']       = 'Lösenordet måste innehålla mellan 4 och 20 tecken!';
 $_['error_confirm']        = 'Lösenord och bekräftelse matchar inte !';
 $_['error_agree']          = 'Fel: Du måste godkänna %s!';
+$_['error_captcha']        = 'Verifieringskoden stämmer inte överens med bilden!';
