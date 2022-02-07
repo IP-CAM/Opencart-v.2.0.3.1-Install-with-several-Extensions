@@ -1,6 +1,6 @@
 <?php
 ini_set('memory_limit', '124M');
-set_time_limit(0);
+#set_time_limit(0);
 class ControllerSeoPowerPackDuplicateUrls extends Controller {
 
 	public function index() {
