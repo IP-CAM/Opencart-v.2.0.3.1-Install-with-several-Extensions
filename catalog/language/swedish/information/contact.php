@@ -10,7 +10,7 @@ $_['text_address']   = 'Adress';
 $_['text_telephone'] = 'Telefon';
 $_['text_fax']       = 'Fax';
 $_['text_open']      = 'Öppettider';
-$_['text_comment']   = 'Kommentarer';
+$_['text_comment']   = 'E-postadress';
 $_['text_success']   = '<p>Din förfrågan har skickats till oss!</p>';
 
 // Entry
