@@ -113,7 +113,8 @@ class ControllerModuleOpenstock extends Controller {
 
 				$json['data'] = $variant;
 
-				if (($variant['stock'] > 0 || $variant['subtract'] == 0) && $variant['active'] == 1) {
+				//if (($variant['stock'] > 0 || $variant['subtract'] == 0) && $variant['active'] == 1) {
+				if ($variant['stock'] > 0 && $variant['active'] == 1) {
 					if ($variant['subtract'] == 0 || $this->config->get('config_stock_display') == 0) {
 						$json['success'] = $this->language->get('text_in_stock_avail');
 					} else {
