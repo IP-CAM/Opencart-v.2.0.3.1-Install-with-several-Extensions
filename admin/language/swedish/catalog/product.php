@@ -77,7 +77,7 @@ $_['entry_download']         = 'Nerladdningar';
 $_['entry_related']          = 'Relaterade produkter';
 $_['entry_tag']          	 = 'Produkt taggar';
 $_['entry_reward']           = 'Bonuspoäng';
-$_['entry_layout']           = 'Överskriv layour';
+$_['entry_layout']           = 'Överskriv layout';
 $_['entry_recurring']        = 'Abonnemangsprofiler';
 
 // Help
@@ -105,3 +105,20 @@ $_['error_name']             = 'Namn på produkten måste innehålla mer än 3 o
 $_['error_meta_title']       = 'Meta titel måste innehålla mer än 3 och mindre än 255 tecken!';
 $_['error_model']            = 'Artikelnummer måste innehålla mer än 3 och mindre än 64 tecken!';
 $_['error_keyword']          = 'SEO-nyckelord används redan!';
+
+// Openstock
+$_['entry_has_option']               = 'Har alternativ';
+$_['tab_stock']                      = 'Lagerkontroll';
+$_['column_label_hasoption']         = 'Har alternativ';
+$_['text_yes_openstock']             = 'Ja - OpenStock';
+$_['text_yes_regular']               = 'Ja - Vanlig';
+$_['tab_option_stock']               = 'Lager för alternativ';
+$_['lang_atn_adding']                = 'Om du lägger till eller tar bort alternativgrupper så kommer det resultera i att lager för alternativ kommer räknas om! Du kan lägga till / ta bort enstaka alternativ och dina nya lager för alternativ kommer vara synliga efter du har sparat produkten.';
+$_['entry_stockoption_sku']          = 'SKU';
+$_['entry_stockoption_mix']          = 'Kombination';
+$_['entry_stockoption_active']       = 'Aktiv';
+$_['entry_stockoption_subtract']     = 'Dra från lager';
+$_['entry_stockoption_stock']        = 'Lagersaldo';
+$_['entry_stockoption_price']        = 'Pris';
+$_['entry_stockoption_groups']       = 'Special';
+$_['entry_stockoption_discount']     = 'Rabatt';
