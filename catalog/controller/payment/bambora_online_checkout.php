@@ -242,7 +242,7 @@ class ControllerPaymentBamboraOnlineCheckout extends Controller
         $orderTotalAmount = $this->formatForCurrency($orderTotalAmount);
 
         $params = array();
-        $params['language'] = $this->session->data['language'];
+        $params['language'] = 'sv';
         $params['instantcaptureamount'] = $this->config->get($this->getConfigBaseName() .'_instant_capture') === "1" ? $this->model_payment_bambora_online_checkout->convertPriceToMinorunits($orderTotalAmount, $minorunits)  : 0;
         $params['paymentwindowid'] = $this->config->get($this->getConfigBaseName() . '_window_id');
 
