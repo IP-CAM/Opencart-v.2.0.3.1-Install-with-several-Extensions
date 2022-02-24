@@ -17,6 +17,12 @@
       <h2><?php echo $text_edit_address; ?></h2>
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" class="form-horizontal">
         <fieldset>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-company"><?php echo $entry_company; ?></label>
+            <div class="col-sm-10">
+              <input type="text" name="company" value="<?php echo $company; ?>" placeholder="<?php echo $entry_company; ?>" id="input-company" class="form-control" />
+            </div>
+          </div>
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="input-firstname"><?php echo $entry_firstname; ?></label>
             <div class="col-sm-10">
@@ -33,12 +39,6 @@
               <?php if ($error_lastname) { ?>
               <div class="text-danger"><?php echo $error_lastname; ?></div>
               <?php } ?>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label" for="input-company"><?php echo $entry_company; ?></label>
-            <div class="col-sm-10">
-              <input type="text" name="company" value="<?php echo $company; ?>" placeholder="<?php echo $entry_company; ?>" id="input-company" class="form-control" />
             </div>
           </div>
           <div class="form-group required">

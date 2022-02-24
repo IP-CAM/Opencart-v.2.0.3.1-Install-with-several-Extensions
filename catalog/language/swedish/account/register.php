@@ -6,7 +6,7 @@ $_['heading_title']        = 'Registrera konto';
 $_['text_account']         = 'Konto';
 $_['text_register']        = 'Registrera';
 $_['text_account_already'] = 'Om du redan har ett konto hos oss, vänligen gå till <a href="%s">inloggningssidan</a>.';
-$_['text_your_details']    = 'Dina personuppgifter';
+$_['text_your_details']    = 'Dina uppgifter';
 $_['text_your_address']    = 'Din adress';
 $_['text_newsletter']      = 'Nyhetsbrev';
 $_['text_your_password']   = 'Ditt lösenord';

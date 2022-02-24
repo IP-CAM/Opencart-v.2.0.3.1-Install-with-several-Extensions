@@ -5,7 +5,7 @@ $_['heading_title']     = 'Kontoinformation';
 // Text
 $_['text_account']      = 'Konto';
 $_['text_edit']         = 'Ändra information';
-$_['text_your_details'] = 'Dina personuppgifter';
+$_['text_your_details'] = 'Dina uppgifter';
 $_['text_success']      = 'Klart: Ditt konto har uppdaterats.';
 
 // Entry
