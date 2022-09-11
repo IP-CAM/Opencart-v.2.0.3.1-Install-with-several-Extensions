@@ -923,7 +923,7 @@ class ModelSeoPowerPackSettings extends Model {
 
 	/* Modification Support Functions */
 
-	public function addProductModifier($product_id = 0, $data) {
+	public function addProductModifier($data, $product_id = 0) {
 
 		$data['manufacturer'] = '';
 		if (intval($data['manufacturer_id']) > 0) {
@@ -1138,7 +1138,7 @@ class ModelSeoPowerPackSettings extends Model {
 		return $data;
 	}
 
-	public function editProductModifier($product_id = 0, $data) {
+	public function editProductModifier($data, $product_id = 0) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'product_id=" . (int) $product_id . "'");
 		foreach ($data['product_description'] as $language_id => $value) {
 
