@@ -94,21 +94,23 @@ footer hr{border-color:<?php echo isset($custom_footer['footer_hr_color']) ? $cu
 	 
 	 <?php if($custom_footer['footer_custom_content_status']==1) { ?> <div><?php echo html_entity_decode($custom_footer['footer_custom_content'], ENT_QUOTES, 'UTF-8'); ?></div> <?php } ?>
     
-	 <?php if($custom_footer['footer_hr_status']==1) { ?> <hr> <?php } ?>
+	 <?php if($custom_footer['footer_hr_status']==1) { ?> 
+				<br />
+			 <?php } ?>
 	 
-		 <?php } else { ?> <hr> <?php } ?>
+		 <?php } else { ?> 
+				<br />
+			 <?php } ?>
      <?php if($custom_footer['status'] == 1) { ?> 
 			<?php if($custom_footer['footer_powered_by_text_status']==1) { ?> <div><?php echo html_entity_decode($custom_footer['footer_powered_by_text'], ENT_QUOTES, 'UTF-8'); ?></div> <?php } ?>
-		 <?php } else { ?> <p><?php echo $powered; ?></p>  <?php } ?>
+		 <?php } else { ?>   <?php } ?>
   </div>
 </footer>
 
-<!--
-OpenCart is open source software and you are free to remove the powered by OpenCart if you want, but its generally accepted practise to make a small donation.
-Please donate via PayPal to donate@opencart.com
-//-->
 
-<!-- Theme created by Welford Media for OpenCart 2.0 www.welfordmedia.co.uk -->
+
+
+
 
 
 <?php if( $maintenance ) { ?>
